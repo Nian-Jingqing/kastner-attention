@@ -1,9 +1,9 @@
 %% build the dataset collection
 
 addpath('/snel/home/fzhu23/bin/LFADS/lfads-run-manager/src')
-addpath('/snel/home/fzhu23/bin/analysis_tools')
-addpath('/snel/home/fzhu23/Projects/Pulvinar/codes')
-addpath('/snel/home/fzhu23/Projects/Pulvinar/myTools')
+addpath('/snel/home/fzhu23/Projects/Pulvinar/old_pulvinarRepo/Kastner_Attention/analysis_tools')
+addpath('/snel/home/fzhu23/Projects/Pulvinar/old_pulvinarRepo/Kastner_Attention/codes')
+addpath('/snel/home/fzhu23/Projects/Pulvinar/old_pulvinarRepo/Kastner_Attention/myTools')
 %% Locate and specify the datasets
 datasetPath = ['/snel/share/share/derived/kastner/data_processed/pulvinar/' ...
     'multi-unit/continuousOverlapChop/multiDay_JanToMar/withExternalInput_withLag/'];
@@ -246,6 +246,8 @@ loadpath = ['/snel/share/share/data/kastner/pulvinar/multi-unit/preAligned/data_
 data = load(loadpath);
 UE2 = data.UE;
 clear data
+arrayChar_hold = UE2.arrayShapesCorrect(UE2.isHoldTrial);
+%%
 
 %% Align the trials for real data
 
