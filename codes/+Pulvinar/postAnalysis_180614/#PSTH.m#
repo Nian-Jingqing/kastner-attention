@@ -132,7 +132,7 @@ nFactors = size(r_lfadsWhole.r(1).factors, 1);
 
 %%
 loadpath = ['/snel/share/share/derived/kastner/data_processed/pulvinar/' ...
-    'multi-unit/continuousOverlapChop/multiDay_JanToMar/withExternalInput_withLag/170127_cueOnArrayOnTargetDim_HoldRel.mat'];
+    'multi-unit/continuousOverlapChop/multiDay_JanToMar/withExternalInput_withLag/170308_cueOnArrayOnTargetDim_HoldRel.mat'];
 
 olapChopped = load(loadpath);
 olapChopped = olapChopped.combinedData;
@@ -145,7 +145,7 @@ out = olapChopped.r.generate_overlap_chop_lfads_data( trial_time_ms, trial_olap_
 
 %% get LFADS data
 r_id = 1;
-day_id = 1;
+day_id = 5;
 run = rc2.runs(r_id);
 r_lfads = olapChopped.r.get_output_from_lfads(run, day_id, trial_time_ms, trial_olap_ms);
 assembled_lfads = R.Rstruct(r_lfads);
@@ -190,7 +190,7 @@ end
 assembled_real = R.Rstruct(spikes);
 
 %% get timing info
-loadpath = ['/snel/share/share/data/kastner/pulvinar/multi-unit/preAligned/data_raw/MarToJun/v10/M20170127/Gratings/M20170127_PUL_9M-g3-g4-g5-evokedSpiking-v10.mat'];
+loadpath = ['/snel/share/share/data/kastner/pulvinar/multi-unit/preAligned/data_raw/MarToJun/v10/M20170308/Gratings/M20170308_PUL_63M-g2-g3-g4-g5-g6-g7-g8-evokedSpiking-v10.mat'];
 data = load(loadpath);
 UE = data.UE;
 clear data
@@ -241,6 +241,13 @@ assembled_hold_lfads = R.Rstruct(assembled_hold_lfads.r((stopTimes - dimStart) >
 
 dimStart_lfads = dimStart_lfads((stopTimes - dimStart) > 302);
 
+%% get arrayshape info
+loadpath = ['/snel/share/share/data/kastner/pulvinar/multi-unit/preAligned/data_raw/MarToJun/v10/M20170311/MUA_GRATINGS/M20170308_PUL_63M-g3-g4-g6-g7-g8-g9-evokedSpiking-v12.mat'];
+data = load(loadpath);
+UE2 = data.UE;
+clear data
+arrayChar_hold = UE2.arrayShapesCorrect(UE2.isHoldTrial);
+%%
 
 %% Align the trials for real data
 
@@ -290,7 +297,7 @@ binsize = par.spikeBinMs;
 %% select good neurons (v12) - new good neurons after May 21, 18: why new good neurons???
 % still need to update the 170320 - 170407 *****
 
-nIndices = [1 4 6 7 8 11 12 13 14 16 17 19 20 21 23 24 25 26 27 29 30 31 32];
+% nIndices = [1 4 6 7 8 11 12 13 14 16 17 19 20 21 23 24 25 26 27 29 30 31 32];
 % % 170127
 % nIndices = [1 2 4 5 6 7 8 9 12 14 15 16 17 19 20 23 24 25 26 29 30 31 32];
 % % 170130
@@ -298,7 +305,7 @@ nIndices = [1 4 6 7 8 11 12 13 14 16 17 19 20 21 23 24 25 26 27 29 30 31 32];
 % % 170201
 % nIndices = [3 4 5 7 11 12 15 17 18 23 28 30];
 % % 170211
-% nIndices = [9 15 18 20 24 28 30 31 32 34 37 38 39 42 43 44 45 46 47 48 52 54 55 58 60 62 63 64];
+nIndices = [9 15 18 20 24 28 30 31 32 34 37 38 39 42 43 44 45 46 47 48 52 54 55 58 60 62 63 64];
 % % 170308
 % nIndices = [2 3 5 8 9 11 13 17 20 22 25 26 32 33 36 38 42 43 50 54 55 56 57 58];
 % % 170311
@@ -321,7 +328,7 @@ nIndices = [1 4 6 7 8 11 12 13 14 16 17 19 20 21 23 24 25 26 27 29 30 31 32];
 %% plots of avg neuron firing rate and avg LFADS rate for different cue locations， plus spiking rasters
 %savedirOne = ['/snel/share/share/derived/kastner/LFADS_runs/pulvinar/Multi-day/multiDa%y_CO_AO_TD_HoldRel_JanToApr/' ...
 %    'postAnalysis/withExternalInput_20180614/PSTH/NoSmoothing/arrayOnset/170130/'];
-savedirOne = '/snel/share/share/derived/kastner/LFADS_runs/pulvinar/Multi-day/multiDay_CO_AO_TD_HoldRel_JanToApr/postAnalysis/withExternalInput_20180614/PSTH/committeeMeetingVersion/4';
+savedirOne = '/snel/share/share/derived/kastner/LFADS_runs/pulvinar/Multi-day/multiDay_CO_AO_TD_HoldRel_JanToApr/postAnalysis/withExternalInput_20180614/PSTH/committeeMeetingVersion/1';
 
 %cd(savedirOne);
 clear set

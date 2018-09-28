@@ -241,6 +241,11 @@ assembled_hold_lfads = R.Rstruct(assembled_hold_lfads.r((stopTimes - dimStart) >
 
 dimStart_lfads = dimStart_lfads((stopTimes - dimStart) > 302);
 
+%% get arrayshape info
+loadpath = ['/snel/share/share/data/kastner/pulvinar/multi-unit/preAligned/data_raw/MarToJun/v10/M20170311/MUA_GRATINGS/M20170308_PUL_63M-g3-g4-g6-g7-g8-g9-evokedSpiking-v12.mat'];
+data = load(loadpath);
+UE2 = data.UE;
+clear data
 
 %% Align the trials for real data
 
