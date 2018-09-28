@@ -242,12 +242,20 @@ assembled_hold_lfads = R.Rstruct(assembled_hold_lfads.r((stopTimes - dimStart) >
 dimStart_lfads = dimStart_lfads((stopTimes - dimStart) > 302);
 
 %% get arrayshape info
-loadpath = ['/snel/share/share/data/kastner/pulvinar/multi-unit/preAligned/data_raw/MarToJun/v10/M20170311/MUA_GRATINGS/M20170308_PUL_63M-g3-g4-g6-g7-g8-g9-evokedSpiking-v12.mat'];
+loadpath = ['/snel/share/share/data/kastner/pulvinar/multi-unit/preAligned/data_raw/MarToJun/v12/M20170311/MUA_GRATINGS/M20170311_PUL_63M-g3-g4-g6-g7-g8-g9-evokedSpiking-v12.mat'];
 data = load(loadpath);
 UE2 = data.UE;
 clear data
 arrayChar_hold = UE2.arrayShapesCorrect(UE2.isHoldTrial);
 %%
+arrayChar_hold = arrayChar_hold((stopTimes - dimStart) > 302);
+isHoldHold = false(1, length(arrayChar_hold));
+for i = 1: length(arrayChar_hold)
+    if strcmp(arrayChar_hold(i), 'HRHR')
+        isHoldHold(i) = true;
+    end
+end
+
 
 %% Align the trials for real data
 
@@ -279,6 +287,10 @@ nTrials = length(assembled_real.r); % get trial number
 nTimesRaw = size(assembled_real.r(1).cueAlign, 2); % get trial length for raw data, AKA, before re-binned
 nNeurons = size(assembled_real.r(1).cueAlign, 1); % get neuron nubmer
 
+%% select trials that have same shape at cue 1 and cue 3
+assembled_hold_real.r = assembled_hold_real.r(isHoldHold);
+assembled_hold_lfads.r = assembled_hold_lfads.r(isHoldHold);
+olapChopped_hold = olapChopped_hold(isHoldHold);
 
 %% compute avg neuron firing rates for different cue locations for real spiking
 
