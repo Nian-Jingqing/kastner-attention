@@ -1,20 +1,27 @@
-% %%
-% buildRuns
-% 
-% 
-% %%
-% loadChoppedCombined
-% 
+%%% add your paths here.
 
-cp_paths_laptop
+% add paths for chethan
+cp_paths
+
+
+%%
+buildRuns
+
+ 
+%%
+loadChoppedCombined
+ 
+
+%% make a place to store output videos
 outdir = '/Users/chethan/tmp/kastnervid/';
 if ~isdir( outdir )
     mkdir( outdir );
 end
 
-
-%%
-load ~/tmp/forPlotting
+%% only on laptop
+% load data from file
+%cp_paths_laptop
+%load ~/tmp/forPlotting
 
 %% fix any weirdness with zeros in the ALF
 for nd = 1:6

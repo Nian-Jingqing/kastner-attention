@@ -1,9 +1,5 @@
 %% build the dataset collection
-
-% add paths for chethan
-cp_paths
-
-%% Locate and specify the datasets
+% Locate and specify the datasets
 datasetPath = ['/snel/share/share/derived/kastner/data_processed/pulvinar/' ...
     'multi-unit/continuousOverlapChop/multiDay_JanToMar/withExternalInput_withLag/'];
 dc = Pulvinar.DatasetCollection(datasetPath);
