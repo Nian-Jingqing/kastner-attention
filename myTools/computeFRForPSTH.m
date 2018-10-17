@@ -1,4 +1,4 @@
-function [AvgFiringRate_InRF,AvgFiringRate_OffRF, SmoothedSpikingMatrix, TrialIndexInRF, TrialIndexOffRF, nTimesLFADS] = computeFRForPSTH(assembled, infield, sigma, binsize, olapChopped, type)
+function [AvgFiringRate_InRF,AvgFiringRate_OffRF, SmoothedSpikingMatrix, TrialIndexInRF, TrialIndexOffRF, nTimesLFADS] = computeFRForPSTH(assembled, infield, sigma, binsize, olapChopped, type, smoothOrNot)
 %COMPUTEFRFORPSTH Summary of this function goes here
 %   Detailed explanation goes here
 
@@ -7,14 +7,21 @@ if strcmp(type, 'lfads')
     assembled.postSmoothCutOff( infield, 'rates_cutOff', cutOff_LFADSRates);
     SmoothedSpikingMatrix = permute(cat(3, assembled.r.rates_cutOff), [3 2 1]);
     nTimesLFADS = size(assembled.r(1).rates_cutOff, 2);
-else
+elseif strcmp(smoothOrNot, 'raw')
     cutOff_smoothedSpiking = binsize*ceil(sigma/binsize);
     assembled.postSmoothCutOff(infield, 'rawSpike_cutOff', cutOff_smoothedSpiking);
-%     assembled.smoothFieldInR( infield, 'spike_smoothed', sigma, 1);
-%     assembled.postSmoothCutOff( 'spike_smoothed', 'spike_cutOff', cutOff_smoothedSpiking);
+    % assembled.smoothFieldInR( infield, 'spike_smoothed', sigma, 1);
+    %     assembled.postSmoothCutOff( 'spike_smoothed', 'spike_cutOff', cutOff_smoothedSpiking);
     rbinned = assembled.binData({'rawSpike_cutOff'}, [binsize]);
     SmoothedSpikingMatrix = permute(cat(3, rbinned.rawSpike_cutOff), [3 2 1]);
     nTimesLFADS = size(rbinned(1).rawSpike_cutOff,2);
+else
+    cutOff_smoothedSpiking = binsize*ceil(sigma/binsize);
+    assembled.smoothFieldInR( infield, 'spike_smoothed', sigma, 1);
+    assembled.postSmoothCutOff( 'spike_smoothed', 'smoothedSpike_cutOff', cutOff_smoothedSpiking);
+    rbinned = assembled.binData({'smoothedSpike_cutOff'}, [binsize]);
+    SmoothedSpikingMatrix = permute(cat(3, rbinned.smoothedSpike_cutOff), [3 2 1]);
+    nTimesLFADS = size(rbinned(1).smoothedSpike_cutOff,2);
 end
 
 clVector = arrayfun(@(x) x.cueLoc, olapChopped);

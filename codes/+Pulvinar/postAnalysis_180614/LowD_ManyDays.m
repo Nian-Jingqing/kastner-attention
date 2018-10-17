@@ -1,19 +1,21 @@
-%%% add your paths here.
+%% add your paths here.
 
-% add paths for chethan
-cp_paths
-
+% add paths for Feng
+addpath('/snel/home/fzhu23/bin/LFADS/lfads-run-manager/src')
+addpath('/snel/home/fzhu23/Projects/Pulvinar/old_pulvinarRepo/Kastner_Attention/myTools/kastner_analysis_tools')
+addpath('/snel/home/fzhu23/Projects/Pulvinar/old_pulvinarRepo/Kastner_Attention/codes')
+addpath('/snel/home/fzhu23/Projects/Pulvinar/old_pulvinarRepo/Kastner_Attention/myTools')
 
 %%
-buildRuns
+buildRuns_20180614
 
  
 %%
-loadChoppedCombined
+loadChoppedCombined_twoLocations
  
 
 %% make a place to store output videos
-outdir = '/Users/chethan/tmp/kastnervid/';
+outdir = '/Users/feng/SNEL/tmp/kastnervid/';
 if ~isdir( outdir )
     mkdir( outdir );
 end

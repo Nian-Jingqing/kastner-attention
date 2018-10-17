@@ -57,7 +57,7 @@ r_id = 1;
 run = rc2.runs(r_id);
 binsize = par.spikeBinMs;
 % rebin the data by some factor
-rfactor = 2;
+rfactor = 1;
 binsize_rescaled = binsize * rfactor;
 
 use_rates = false;
@@ -68,7 +68,7 @@ trial_olap_ms = 100;
 for nday = 1: numel( datasets )
     disp( sprintf( 'getting rates day %g / %g', nday, numel( datasets ) ) );
     day_id = nday;
-    r_lfads2 = olapChopped{ nday }.r.get_output_from_lfads(run, day_id, trial_time_ms, trial_olap_ms, 'factors');
+    r_lfads2 = olapChopped{ nday }.r.get_output_from_lfads(run, day_id, trial_time_ms, trial_olap_ms, 'rates');
     assembled_lfads2 = R.Rstruct(r_lfads2);
     alf{ nday } = assembled_lfads2.r;
 

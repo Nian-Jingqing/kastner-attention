@@ -322,7 +322,6 @@ classdef pulvinarData < R.Rstruct
                 nTimesThisTrial = ceil(size(r.r(r_trial).spikes, 2)/binWidthMs);
                 r_lfads(r_trial).rates = zeros(size(tot_rates,2),nTimesThisTrial);
                 nPieces = ceil( (size( r.r(r_trial).spikes,2 ) - trial_time_ms_preBin ) / ( trial_time_ms_preBin - trial_olap_ms_preBin ) );
-             
                 
                 for i = 1:nPieces
                     ratesThisPiece = squeeze( tot_rates( i+nChops, :, : ) );
