@@ -6,24 +6,25 @@
 % Pulvinar.Dataset(dc, '170308_cueOnArrayOnTargetDim_HoldRel.mat');
 % Pulvinar.Dataset(dc, '170311_cueOnArrayOnTargetDim_HoldRel.mat');
 
-datasets(1).shortName = '170127';
-datasets(1).longName = '20170127';
-datasets(2).shortName = '170130';
-datasets(2).longName = '20170130';
-datasets(3).shortName = '170201';
-datasets(3).longName = '20170201';
-datasets(4).shortName = '170211';
-datasets(4).longName = '20170211';
-datasets(5).shortName = '170308';
-datasets(5).longName = '20170308';
-datasets(6).shortName = '170311';
-datasets(6).longName = '20170311';
+datasets(1).shortName = '170529';
+datasets(1).longName = '20170529';
+datasets(2).shortName = '170601';
+datasets(2).longName = '20170601';
+datasets(3).shortName = '170608';
+datasets(3).longName = '20170608';
+datasets(4).shortName = '170613';
+datasets(4).longName = '20170613';
+datasets(5).shortName = '170615';
+datasets(5).longName = '20170615';
+datasets(6).shortName = '170618';
+datasets(6).longName = '20170618';
+datasets(7).shortName = '170621';
+datasets(7).longName = '20170621';
 
 
 
 %% % load all the chopped and recombined data (post-LFADS)
-loadpath = ['/snel/share/share/derived/kastner/data_processed/pulvinar/' ...
-            'multi-unit/continuousOverlapChop/multiDay_JanToMar/withExternalInput_withLag/'];
+loadpath = ['/snel/share/share/derived/kastner/data_processed/pulvinar/multi-unit/continuousOverlapChop/multiDay_JanToMar/withExternalInput_withLag/fourLocations/'];
 
 % iterate over days, load each day and add it to a 'olapChopped' cell array
 clear olapChopped
@@ -40,7 +41,7 @@ end
 
 for nday = 1: numel( datasets )
     disp( sprintf( 'loading UEs day %g / %g', nday, numel( datasets ) ) );
-    loaddir = sprintf('/snel/share/share/data/kastner/pulvinar/multi-unit/preAligned/data_raw/MarToJun/v12/M%s/MUA_GRATINGS/', datasets( nday ).longName );
+    loaddir = sprintf('/snel/share/share/data/kastner/pulvinar/multi-unit/preAligned/data_raw/MarToJun/fourLocations/M%s/MUA_GRATINGS/', datasets( nday ).longName );
     searchPattern = sprintf( '%sM%s*-evokedSpiking-*.mat', loaddir, datasets( nday ).longName );
     tmp = dir( searchPattern );
     disp( tmp(1).name );
@@ -72,13 +73,6 @@ for nday = 1: numel( datasets )
     assembled_lfads2 = R.Rstruct(r_lfads2);
     alf{ nday } = assembled_lfads2.r;
 
-    % get the actual lfads firing rate, called FR here.
-    disp( sprintf( 'getting LFADS firing ratess day %g / %g', nday, numel( datasets ) ) );
-    day_id = nday;
-    r_lfads3 = olapChopped{ nday }.r.get_output_from_lfads(run, day_id, trial_time_ms, trial_olap_ms, 'rates');
-    assembled_lfads3 = R.Rstruct(r_lfads3);
-    %    alf{ nday } = assembled_lfads3.r;    
-    
     % get all real data
     trueSpikes = [olapChopped{ nday }.r.r.spikes];
     nSpikes = size(trueSpikes, 2);
@@ -108,10 +102,15 @@ for nday = 1: numel( datasets )
         nChops = nChops + nPieces;
     end
     assembled_real2 = R.Rstruct(spikes);
-    rbinned_real = assembled_real2.binData({'spikes'}, [binsize_rescaled]);
+    clear spikes
+
+    %% get smoothed real rate
+    sigma = 20;
+    assembled_real2.smoothFieldInR( 'spikes', 'spike_smoothed', sigma, 1);
+    rbinned_smoothed = assembled_real2.binData({'spike_smoothed'}, [binsize_rescaled]);
+    assembled_real3 = R.Rstruct(rbinned_smoothed);
     %    alf{ nday } = assembled_real2.r;
 
-    
     % get all the timing info from the UE struct on a per-trial basis
     %% get cueOn, arrayOn, targetDim timing from real data
     sessStartTime = UEs{ nday }.fixationAndLeverTimes.firstEnterFixationTimesPreCue(1)*rawSampleRate;
@@ -146,24 +145,19 @@ for nday = 1: numel( datasets )
             alf{ nday }( ntr ).rates = log( alf{ nday }( ntr ).rates );
         end
         rdim = size( alf{ nday }(ntr).rates );
-        tmp1 = alf{ nday }(ntr).rates(:, 1:floor( rdim( 2 ) / rfactor ) * rfactor );
-        tmp1 = reshape( tmp1, rdim(1), rfactor, floor( rdim( 2 ) / rfactor ) );
-        tmp1 = squeeze( mean( tmp1, 2 ) );
-        alf{ nday }(ntr).rates = tmp1;
-
-        rdim2 = size( assembled_lfads3.r( ntr ).rates );
-        tmp2 = assembled_lfads3.r( ntr ).rates(:, 1:floor( rdim2( 2 ) / rfactor ) * rfactor );
-        tmp2 = reshape( tmp2, rdim2(1), rfactor, floor( rdim2( 2 ) / rfactor ) );
-        tmp2 = squeeze( mean( tmp2, 2 ) );
-        alf{ nday }(ntr).FR = tmp2;
-
-        
+        tmp = alf{ nday }(ntr).rates(:, 1:floor( rdim( 2 ) / rfactor ) * rfactor );
+        tmp = reshape( tmp, rdim(1), rfactor, floor( rdim( 2 ) / rfactor ) );
+        tmp = squeeze( mean( tmp, 2 ) );
+        alf{ nday }(ntr).rates = tmp;
         
         alf{ nday }( ntr ).cueOnset = round( cueStart( ntr ) / binsize_rescaled);
         alf{ nday }( ntr ).arrayOnset = round( arrayStart( ntr ) / binsize_rescaled);
         alf{ nday }( ntr ).arrayDim = round( dimStartAll( ntr ) / binsize_rescaled);
 
-        alf{ nday }( ntr ).spikes = rbinned_real( ntr ).spikes;
+        
+
+        alf{ nday }( ntr ).spikes = assembled_real2.r( ntr ).spikes;
+        alf{ nday }( ntr ).spike_smoothed = assembled_real3.r( ntr ).spike_smoothed;
     end
 end    
 
