@@ -167,3 +167,11 @@ for nday = 1: numel( datasets )
     end
 end    
 
+%% fix any weirdness with zeros in the ALF
+for nd = 1:6
+    for ntr = 1:numel(alf{nd})
+        alf{nd}(ntr).rates(alf{nd}(ntr).rates==0) = nan;
+        alf{nd}(ntr).rt = UEs{nd}.rt( ntr );
+    end
+end
+
