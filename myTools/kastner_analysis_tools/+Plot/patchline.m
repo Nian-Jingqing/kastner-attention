@@ -87,7 +87,6 @@ function p = patchline(xs,ys,varargin)
 % Copyright 2012 MathWorks, Inc.
 %
 % See also: patch, line, plot
-
 [zs,PVs] = parseInputs(varargin{:});
 if rem(numel(PVs),2) ~= 0
     % Odd number of inputs!

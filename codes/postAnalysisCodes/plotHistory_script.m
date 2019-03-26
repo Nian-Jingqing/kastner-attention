@@ -1,152 +1,3 @@
-%% add your paths here.
-
-% add paths for Feng
-addpath('/snel/home/fzhu23/bin/LFADS/lfads-run-manager/src')
-addpath('/snel/home/fzhu23/Projects/Pulvinar/old_pulvinarRepo/Kastner_Attention/myTools/kastner_analysis_tools')
-addpath('/snel/home/fzhu23/Projects/Pulvinar/old_pulvinarRepo/Kastner_Attention/codes')
-addpath('/snel/home/fzhu23/Projects/Pulvinar/old_pulvinarRepo/Kastner_Attention/myTools')
-
-addpath('/snel/home/fzhu23/Projects/Pulvinar/old_pulvinarRepo/Kastner_Attention/myTools/jPCA_tools')
-addpath('/snel/home/fzhu23/Projects/Pulvinar/old_pulvinarRepo/Kastner_Attention/codes/postAnalysisCodes')
-
-%% test jPCA code
-addpath('/snel/home/fzhu23/Projects/Pulvinar/old_pulvinarRepo/Kastner_Attention/myTools/jPCA_tools/fromMarksLibraries')
-addpath('/snel/home/fzhu23/Projects/Pulvinar/old_pulvinarRepo/Kastner_Attention/myTools/jPCA_tools/CircStat2010d')
-%%
-buildRuns_20180614
-
- 
-%%
-loadChoppedCombined_twoLocations
-
-%% save the loaded data
-%out.alf = alf;
-%out.rfLoc = rfLoc;
-%out.binsize_rescaled = binsize_rescaled;
-%out.UEs = UEs;
-saveDir2 = '/snel/share/share/derived/kastner/LFADS_runs/pulvinar/Multi-day/multiDay_CO_AO_TD_HoldRel_JanToApr/postAnalysis/withExternalInput_20180614/loadedData/';
-cd(saveDir2)
-%saveName = 'allDays';
-%save(saveName, 'out');
-data = load('allDays');
-alf = data.out.alf;
-UEs = data.out.UEs;
-binsize_rescaled = data.out.binsize_rescaled;
-
-%% make a place to store output videos
-outdir = '/snel/share/share/derived/kastner/LFADS_runs/pulvinar/Multi-day/multiDay_CO_AO_TD_HoldRel_JanToApr/postAnalysis/withExternalInput_20180614/traj_LowD/SFN/cueOnset/tmp13/';
-if ~isdir( outdir )
-    mkdir( outdir );
-end
-
-cd(outdir)
-%% only on laptop
-% load data from file
-%cp_paths_laptop
-%load ~/tmp/forPlotting
-
-% fix any weirdness with zeros in the ALF
-for nd = 1:6
-    for ntr = 1:numel(alf{nd})
-        alf{nd}(ntr).rates(alf{nd}(ntr).rates==0) = nan;
-        alf{nd}(ntr).rt = UEs{nd}.rt( ntr );
-    end
-end
-
-
-%
-% number of trials for each day
-numTrialsTot = cellfun( @numel, alf );
-
-
-% %  trials we want have the UE2.arrayShapesCorrect string 'HRHR'
-% %  they must also be hold trials, i.e. UE2.isHoldTrial
-
-
-for nday = 1 : numel( alf )
-    isCorrectArray{ nday } = arrayfun(@(x) strcmp(x, 'HRHR'), UEs{ nday }.arrayShapesCorrect);
-    trialsToKeep{ nday } = isCorrectArray{ nday };% & UE2.isHoldTrial;
-
-    cueLocs{ nday } = unique(UEs{ nday }.cueLoc);
-
-    for nc = 1 : numel( cueLocs{ nday } )
-        trialsByCueLoc{ nday }{nc} = find( trialsToKeep{ nday } & (UEs{ nday }.cueLoc==cueLocs{ nday }(nc)));
-        rtsByCueLoc{ nday }{nc} = UEs{ nday }.rt( trialsByCueLoc{ nday }{nc} );    
-    end
-end
-
-%
-
-% concatenate all the factors
-
-% % this window was used for finding oscillations during arrayDelay in
-% %         factors 6 7 8 for session 6
-%window = round( [-300  00] / binsize_rescaled );
-
-window = round([0 400]/binsize_rescaled);
-
-%window = round( [-1200 : 500] / binsize );
-
-%whichfieldDimred = 'arrayDim';
-%whichfieldDimred = 'arrayOnset';
-whichfieldDimred = 'cueOnset';
-
-%whichfieldPlot = 'arrayDim';
-%newWindow = round( [-900  650] / binsize_rescaled );
-
-
-
-%whichfieldPlot = 'arrayOnset';
-%newWindow = round( [-200  1100] / binsize_rescaled );
-
-
-whichfieldPlot = 'cueOnset';
-newWindow = round( [0  600] / binsize_rescaled );
-
-
-% only do dimred based on day 6
-timePoints = window(1):window(2);
-numBins = numel( timePoints);
-numFactors = size( alf{ nday }(1).rates, 1);
-totalTrialsToKeep = sum( cellfun( @sum, trialsToKeep(6) ) );
-allFactors = zeros( numFactors, numBins * totalTrialsToKeep );
-
-
-for nday = 6
-    ind = 1;
-    trialsToKeepInds{ nday } = find( trialsToKeep{ nday } );
-    for itr = 1:numel( trialsToKeepInds{ nday } )
-        ntr = trialsToKeepInds{ nday }( itr );
-        allFactors( :, (0:numBins-1) + ind ) = alf{ nday }( ntr ).rates( :, alf{ nday }( ntr ).( whichfieldDimred ) + timePoints );
-        ind = ind + numBins;
-    end
-end
-
-%% dimred based on all days
-numBins = numel( window );
-numFactors = size( alf{ nday }(1).rates, 1);
-totalTrialsToKeep = sum( cellfun( @sum, trialsToKeep ) );
-allFactors = zeros( numFactors, numBins * totalTrialsToKeep );
-
-%
-
-for nday = 1 : numel( alf)
-    ind = 1;
-    trialsToKeepInds{ nday } = find( trialsToKeep{ nday } );
-    for itr = 1:numel( trialsToKeepInds{ nday } )
-        ntr = trialsToKeepInds{ nday }( itr );
-        allFactors( :, (0:numBins-1) + ind ) = alf{ nday }( ntr ).rates( :, alf{ nday }( ntr ).( whichfieldDimred ) + window );
-        ind = ind + numBins;
-    end
-end 
-
-%% do pca
-meanFactors = mean( allFactors' );
-
-[pca_proj_mat, pc_data] = pca( allFactors', 'NumComponents', 30);
-
-
-
 %% %  % plot
 cmap = lines();
 % which pcs to plot?
@@ -163,7 +14,7 @@ p2p = [1 2 3];
 
 
 % p2p = [7 8 9];
-p2p = [28 29 30];
+p2p = [19 20 21];
 pmin1 = min(pc_data(:, p2p(1)));
 pmax1 = max(pc_data(:, p2p(1)));
 pmin2 = min(pc_data(:, p2p(2)));
@@ -197,12 +48,14 @@ end
 %trail_length = 20;% cp
 trail_length = 20;
 
-
+%%
 %
 for nt = 1 : 5 :numel( window )
-    %for nt = 1:5:80
+%for nt = 1: 3 : 7
+%for nt = 1:5:80
     clf;
-    for nday = 1 : numel( alf )
+    for nday = [1, 6]
+        %    for nday = 1 : numel( alf )
         
         for itr = 1:numel( trialsToKeepInds{ nday } )
             ntr = trialsToKeepInds{ nday }( itr );
@@ -210,9 +63,10 @@ for nt = 1 : 5 :numel( window )
             allRtsThisLoc = rtsByCueLoc{nday}{ cueInd };
             thisTrialRt = UEs{nday}.rt( ntr );
 
-                        if cueInd == 1
-                            continue;
-                        end
+            if cueInd == 1
+                continue;
+            end
+         
             delayTime = (alf{nday}(ntr).arrayDim - alf{nday}(ntr).arrayOnset) * binsize_rescaled;
             %if delayTime >700
             %    continue
@@ -251,6 +105,7 @@ for nt = 1 : 5 :numel( window )
 
             plot_mean = 0;
 
+            
             if ~plot_mean
                 % plot the trace
 
@@ -266,6 +121,7 @@ for nt = 1 : 5 :numel( window )
                 %                set( h, 'edgecolor', linecolor * thisRtRatio );
                 set( h, 'edgecolor', linecolor );
                 set( h, 'facealpha', 0.5, 'edgealpha', 0.5 );
+                set( h, 'linewidth', 0.3);
                 hold on;
 
 
@@ -313,8 +169,10 @@ for nt = 1 : 5 :numel( window )
         set(p(np), 'view', [-39.2000   19.6000]); % many videos made using this view
         %axis(p(np), [ -1.36    0.4   -0.79    0.63   -1.3615    0.9]);
         %axis(p(np), [-1.5    0.4   -1.10    1.7203   -1.9    0.6567]);% this works well for cueOnset
-        axis(p(np), [-2.5    1   -1.5   2   -2    2]); % SFN cueOnset
+        %axis(p(np), [-2.5    1   -1.5   2   -2    2]); % SFN cueOnset
         %axis(p(np), [ -1.5    0.8   -1    1   -1.5    1]); % SFN arrayOnset
+        axis(p(np), [ -1.5    1   -1.5    1.5   -2    1]); % cueOnset later PCs
+        
         
         %if ~isempty( paxis )
         %    axis(p(np), paxis );
@@ -334,29 +192,11 @@ for nt = 1 : 5 :numel( window )
         l2([2 4 6]) = max( l(:, [2 4 6] ) );
         axis(p, l2 );
     end
-        filename= sprintf( '%s%04g.png', outdir, nt);
-        img = getframe(gcf);
-        savepng( img.cdata, filename, 4 );
+    filename= sprintf( '%s%04g.png', outdir, nt);
+    img = getframe(gcf);
+    savepng( img.cdata, filename, 4 );
     %h_SFN = gcf();
     %printpdf(h_SFN,int2str(nt) )
     % savefig(h_SFN, int2str(nt));
     pause(0.1);
 end
-
-
-%% all held rts
-rts = [];
-for nd = 1:6
-    delayTime = ( [alf{nd}.arrayDim] - [alf{nd}.arrayOnset] ) * binsize_rescaled;
-    rts = [rts(:); UEs{ nd }.rt( UEs{ nd }.isHoldTrial(:) & ( delayTime(:) > 875) ) ];
-end
-
-
-%% 2d rt plot
-nd = 1;
-keep  = UEs{nd}.isHoldTrial;
-ts = alf{nd}(keep);
-
-
-figure(3); clf;
-plot3( [ts.arrayOnset] - [ts.cueOnset ], [ts.arrayDim] - [ts.arrayOnset], [ts.rt], 'o');

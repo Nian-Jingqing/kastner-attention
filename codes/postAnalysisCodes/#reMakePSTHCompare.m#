@@ -1,0 +1,13 @@
+%% load data
+loadDataDir = '/snel/share/share/derived/kastner/LFADS_runs/pulvinar/Multi-day/multiDay_CO_AO_TD_HoldRel_JanToApr/postAnalysis/withExternalInput_20180614/PSTH/SFN/data/';
+dir1 = fullfile(loadDataDir, 'run180614');
+dir2 = fullfile(loadDataDir, 'run180403');
+
+data1 = load(dir1);
+data2 = load(dir2);
+%%
+d1 = data1.run180614;
+d2 = data2.run180403;
+%%
+plottingPSTHsComparison(d1.AvgFiringRate_InRF_cue_real,d1.AvgFiringRate_OffRF_cue_real, d1.SmoothedSpikingMatrix_cue_real, d1.AvgFiringRate_InRF_cue_lfads,d1.AvgFiringRate_OffRF_cue_lfads, d1.SmoothedSpikingMatrix_cue_lfads, d1.TrialIndexInRF_cue_real, d1.TrialIndexOffRF_cue_real, d1.nTimesLFADS, 'cueOnset', d1.nIndices, loadDataDir, 3/10, '-300ms', '+700ms', d2.AvgLFADSRate_InRF, d2.AvgLFADSRate_OffRF, d2.WholeLFADSRatesMatrix)
+

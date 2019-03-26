@@ -13,7 +13,8 @@ classdef Run < LFADS.Run
             % allows you to specify a different set of trials used for
             % constructing alignment matrices, e.g. only correct trials.
 
-            tf = true;
+                tf = true; %uncomment this if using different datasets for alignment
+                   %      tf = false;
         end
         
         function out = generateCountsForDataset(r, dataset, mode, varargin) %#ok<INUSL,INUSD>
@@ -59,60 +60,92 @@ classdef Run < LFADS.Run
             
             
          %%%%%%%%%%%% for using a different dataset for alignment matrix %%%%%%%%%
-                    par = r.params;
-            if strcmp(mode, 'export')
-                data = dataset.loadData();
-                data = data.combinedData;
-        
-               trial_time_ms = 500;
-               trial_olap_ms = 100;
-               out = data.r.generate_overlap_chop_lfads_data( trial_time_ms, trial_olap_ms );
+                          par = r.params;
+                    if strcmp(mode, 'export')
+                        data = dataset.loadData();
+                        data = data.combinedData;
+                
+                       trial_time_ms = 500;
+                       trial_olap_ms = 100;
+                       out = data.r.generate_overlap_chop_lfads_data( trial_time_ms, trial_olap_ms );
                  
-           elseif strcmp(mode, 'alignment')
-               data = dataset.loadData();
-               data = data.combinedData;
-               spikeTensor = cat(3, data.R.spikeCounts);
-               if ~isempty( par.nIndices )
-                   spikeTensor = spikeTensor( par.nIndices, : , : );
-               end
-               out.counts = permute( spikeTensor, [3 1 2] ); % use "permute" to make the trials to 
-               %the first dimension. Now the out.counts is a nTrials x
-               %nChannels x nTime matrix
-                %       out.timeVecMs = 1: size(out.counts,3);
-                %       out.conditionId = (ones(1, size(out.counts,1)))';
-               out.conditionId = ([data.R.condition])';
-           end
+                   elseif strcmp(mode, 'alignment')
+                       data = dataset.loadData();
+                       data = data.combinedData;
+                       spikeTensor = cat(3, data.R.spikeCounts);
+                       if ~isempty( par.nIndices )
+                           spikeTensor = spikeTensor( par.nIndices, : , : );
+                       end
+                       out.counts = permute( spikeTensor, [3 1 2] ); % use "permute" to make the trials to 
+                       %the first dimension. Now the out.counts is a nTrials x
+                       %nChannels x nTime matrix
+                        %       out.timeVecMs = 1: size(out.counts,3);
+                        %       out.conditionId = (ones(1, size(out.counts,1)))';
+                       out.conditionId = ([data.R.condition])';
+                   end % must have this end
          
-        end
+                end %must have this end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-            
-            
-            
-            
-        %   %%%%%%%%%%%%%%%%%%%%%%%% runs for no external inputs %%%%%%%%%%%%%%%%%
-        %
-        %   par = r.params;
-        %
-        %   data = dataset.loadData();
-        %
-        %   spikeTensor = cat(3, data.R.spikeCounts); % concatenate R struct to 3D matrix. 
-        %   % if user specifies neurons, extract those indices 
-        %   if ~isempty( par.nIndices )
-        %       spikeTensor = spikeTensor( par.nIndices, : , : );
-        %   end
-        %   % Note, the matrix is nChannels x nTime x nTrials
-        %   out.counts = permute( spikeTensor, [3 1 2] ); % use "permute" to make the trials to 
-        %   %the first dimension. Now the out.counts is a nTrials x
-        %   %nChannels x nTime matrix
-        %        %     out.timeVecMs = 1: size(out.counts,3);
-        %        %      out.conditionId = (ones(1, size(out.counts,1)))';
-        %    out.conditionId = ([data.R.condition])';
-        %       %      out.externalInputs = [];
-        %   % out.counts = data.spikes; % for lorenz dataset          
-        %   % out.timeVecMs = data.timeMs; % for lorenz dataset
-        %   % out.conditionId = data.conditionId; % for lorenz dataset
-        %   % out.truth = data.true_rates; % for lorenz dataset
+
+%############ runs for pre-aligned data but with external inputs ##################
+
+        %par = r.params;
+   
+        %data = dataset.loadData();
+
+        %for itrial = 1 : numel(data.R)
+        %    data.R(itrial).spikeCounts = full(data.R(itrial).spikeCounts);
+        %    data.R(itrial).externalInputs = full(data.R(itrial).externalInputs);
         %end
+        
+        %spikeTensor = cat(3, data.R.spikeCounts); % concatenate R struct to 3D matrix
+        %EITensor = cat(3, data.R.externalInputs);
+        %% if user specifies neurons, extract those indices 
+        %if ~isempty( par.nIndices )
+        %    spikeTensor = spikeTensor( par.nIndices, : , : );
+        %    EITensor = EITensor( par.nIndices, :, : );
+        %end
+        %% Note, the matrix is nChannels x nTime x nTrials
+        %out.counts = permute( spikeTensor, [3 1 2] ); % use "permute" to make the trials to
+        %out.externalInputs = permute( EITensor, [3 1 2] );
+        %%the first dimension. Now the out.counts is a nTrials x
+        %%nChannels x nTime matrix
+        %   %     out.timeVecMs = 1: size(out.counts,3);
+        %    %      out.conditionId = (ones(1, size(out.counts,1)))';
+        %out.conditionId = ([data.R.condition])';
+        %   %      out.externalInputs = [];
+        %% out.counts = data.spikes; % for lorenz dataset          
+        %% out.timeVecMs = data.timeMs; % for lorenz dataset
+        %% out.conditionId = data.conditionId; % for lorenz dataset
+        %% out.truth = data.true_rates; % for lorenz dataset
+        %end
+            
+            
+            
+           %%%%%%%%%%%%%%%%%%%%%%%% runs for no external inputs %%%%%%%%%%%%%%%%%
+        
+           %par = r.params;
+           %
+           %data = dataset.loadData();
+        
+           %spikeTensor = cat(3, data.R.spikeCounts); % concatenate R struct to 3D matrix. 
+           %% if user specifies neurons, extract those indices 
+           %if ~isempty( par.nIndices )
+           %    spikeTensor = spikeTensor( par.nIndices, : , : );
+           %end
+           %% Note, the matrix is nChannels x nTime x nTrials
+           %out.counts = permute( spikeTensor, [3 1 2] ); % use "permute" to make the trials to 
+           %%the first dimension. Now the out.counts is a nTrials x
+           %%nChannels x nTime matrix
+           %     %     out.timeVecMs = 1: size(out.counts,3);
+           %     %      out.conditionId = (ones(1, size(out.counts,1)))';
+           % out.conditionId = ([data.R.condition])';
+           %    %      out.externalInputs = [];
+           %% out.counts = data.spikes; % for lorenz dataset          
+           %% out.timeVecMs = data.timeMs; % for lorenz dataset
+           %% out.conditionId = data.conditionId; % for lorenz dataset
+           %% out.truth = data.true_rates; % for lorenz dataset
+           %end
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%          
             
             

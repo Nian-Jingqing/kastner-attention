@@ -13,28 +13,12 @@ addpath('/snel/home/fzhu23/Projects/Pulvinar/old_pulvinarRepo/Kastner_Attention/
 addpath('/snel/home/fzhu23/Projects/Pulvinar/old_pulvinarRepo/Kastner_Attention/myTools/jPCA_tools/fromMarksLibraries')
 addpath('/snel/home/fzhu23/Projects/Pulvinar/old_pulvinarRepo/Kastner_Attention/myTools/jPCA_tools/CircStat2010d')
 %%
-buildRuns_20180614
+buildRuns_20181128
 
- 
-%%
-loadChoppedCombined_twoLocations
-
-%% save the loaded data
-%out.alf = alf;
-%out.rfLoc = rfLoc;
-%out.binsize_rescaled = binsize_rescaled;
-%out.UEs = UEs;
-saveDir2 = '/snel/share/share/derived/kastner/LFADS_runs/pulvinar/Multi-day/multiDay_CO_AO_TD_HoldRel_JanToApr/postAnalysis/withExternalInput_20180614/loadedData/';
-cd(saveDir2)
-%saveName = 'allDays';
-%save(saveName, 'out');
-data = load('allDays');
-alf = data.out.alf;
-UEs = data.out.UEs;
-binsize_rescaled = data.out.binsize_rescaled;
+loadChoppedCombined_twoLocations_bigN
 
 %% make a place to store output videos
-outdir = '/snel/share/share/derived/kastner/LFADS_runs/pulvinar/Multi-day/multiDay_CO_AO_TD_HoldRel_JanToApr/postAnalysis/withExternalInput_20180614/traj_LowD/SFN/cueOnset/tmp13/';
+outdir = '/snel/share/share/derived/kastner/LFADS_runs/pulvinar/Multi-day/multiDay_CO_AO_TD_HoldRel_JanToApr/postAnalysis/withExternalInput_20181128/traj_LowD/arrayDim/tmp1/';
 if ~isdir( outdir )
     mkdir( outdir );
 end
@@ -45,15 +29,8 @@ cd(outdir)
 %cp_paths_laptop
 %load ~/tmp/forPlotting
 
-% fix any weirdness with zeros in the ALF
-for nd = 1:6
-    for ntr = 1:numel(alf{nd})
-        alf{nd}(ntr).rates(alf{nd}(ntr).rates==0) = nan;
-        alf{nd}(ntr).rt = UEs{nd}.rt( ntr );
-    end
-end
 
-
+%%
 %
 % number of trials for each day
 numTrialsTot = cellfun( @numel, alf );
@@ -81,27 +58,27 @@ end
 
 % % this window was used for finding oscillations during arrayDelay in
 % %         factors 6 7 8 for session 6
-%window = round( [-300  00] / binsize_rescaled );
+window = round( [-300  00] / binsize_rescaled );
 
-window = round([0 400]/binsize_rescaled);
+%window = round([0 400]/binsize_rescaled);
 
 %window = round( [-1200 : 500] / binsize );
 
-%whichfieldDimred = 'arrayDim';
+whichfieldDimred = 'arrayDim';
 %whichfieldDimred = 'arrayOnset';
-whichfieldDimred = 'cueOnset';
+%whichfieldDimred = 'cueOnset';
 
-%whichfieldPlot = 'arrayDim';
-%newWindow = round( [-900  650] / binsize_rescaled );
+whichfieldPlot = 'arrayDim';
+newWindow = round( [-1000  100] / binsize_rescaled );
 
 
 
 %whichfieldPlot = 'arrayOnset';
-%newWindow = round( [-200  1100] / binsize_rescaled );
+%newWindow = round( [0  1100] / binsize_rescaled );
 
 
-whichfieldPlot = 'cueOnset';
-newWindow = round( [0  600] / binsize_rescaled );
+%whichfieldPlot = 'cueOnset';
+%newWindow = round( [0  600] / binsize_rescaled );
 
 
 % only do dimred based on day 6
@@ -112,7 +89,7 @@ totalTrialsToKeep = sum( cellfun( @sum, trialsToKeep(6) ) );
 allFactors = zeros( numFactors, numBins * totalTrialsToKeep );
 
 
-for nday = 6
+for nday = 3
     ind = 1;
     trialsToKeepInds{ nday } = find( trialsToKeep{ nday } );
     for itr = 1:numel( trialsToKeepInds{ nday } )
@@ -120,6 +97,11 @@ for nday = 6
         allFactors( :, (0:numBins-1) + ind ) = alf{ nday }( ntr ).rates( :, alf{ nday }( ntr ).( whichfieldDimred ) + timePoints );
         ind = ind + numBins;
     end
+end
+
+%% get trialsToKeepInds
+for nday = 1 : numel( alf )
+    trialsToKeepInds{ nday } = find( trialsToKeep{ nday } );
 end
 
 %% dimred based on all days
@@ -143,7 +125,7 @@ end
 %% do pca
 meanFactors = mean( allFactors' );
 
-[pca_proj_mat, pc_data] = pca( allFactors', 'NumComponents', 30);
+[pca_proj_mat, pc_data] = pca( allFactors', 'NumComponents', 10);
 
 
 
@@ -163,7 +145,7 @@ p2p = [1 2 3];
 
 
 % p2p = [7 8 9];
-p2p = [28 29 30];
+p2p = [5 6 7];
 pmin1 = min(pc_data(:, p2p(1)));
 pmax1 = max(pc_data(:, p2p(1)));
 pmin2 = min(pc_data(:, p2p(2)));
@@ -195,14 +177,17 @@ end
 
 % trail length in bins
 %trail_length = 20;% cp
-trail_length = 20;
+trail_length = 14;
 
-
+%%
 %
-for nt = 1 : 5 :numel( window )
-    %for nt = 1:5:80
+for nt = 1 : 2 :numel( window )
+%for nt = 1:2:70
+%for nt = 1: 3 : 7
+%for nt = 1:5:80
     clf;
-    for nday = 1 : numel( alf )
+    for nday = [3 5 7]
+        %    for nday = 1 : numel( alf )
         
         for itr = 1:numel( trialsToKeepInds{ nday } )
             ntr = trialsToKeepInds{ nday }( itr );
@@ -210,9 +195,10 @@ for nt = 1 : 5 :numel( window )
             allRtsThisLoc = rtsByCueLoc{nday}{ cueInd };
             thisTrialRt = UEs{nday}.rt( ntr );
 
-                        if cueInd == 1
-                            continue;
-                        end
+            if cueInd == 1
+                continue;
+            end
+         
             delayTime = (alf{nday}(ntr).arrayDim - alf{nday}(ntr).arrayOnset) * binsize_rescaled;
             %if delayTime >700
             %    continue
@@ -251,6 +237,7 @@ for nt = 1 : 5 :numel( window )
 
             plot_mean = 0;
 
+            
             if ~plot_mean
                 % plot the trace
 
@@ -266,6 +253,7 @@ for nt = 1 : 5 :numel( window )
                 %                set( h, 'edgecolor', linecolor * thisRtRatio );
                 set( h, 'edgecolor', linecolor );
                 set( h, 'facealpha', 0.5, 'edgealpha', 0.5 );
+                set( h, 'linewidth', 0.3);
                 hold on;
 
 
@@ -306,15 +294,17 @@ for nt = 1 : 5 :numel( window )
         ylabel(p(np), p2p(2) );
         zlabel(p(np), p2p(3) );
         % this works for dim [6 7 8];
-        %        set(p(np), 'view', [-23.6000    7.6000]);
-        
+              %set(p(np), 'view', [-23.6000    7.6000]);
+        set(p(np), 'view', [-22.4000 1.2000]);
         %set(p(np), 'view', [ -198.0000   -2.8000]);
         %set(p(np), 'view', [-30.4000 7.6000]);
-        set(p(np), 'view', [-39.2000   19.6000]); % many videos made using this view
+        %set(p(np), 'view', [-39.2000   19.6000]); % many videos made using this view
         %axis(p(np), [ -1.36    0.4   -0.79    0.63   -1.3615    0.9]);
         %axis(p(np), [-1.5    0.4   -1.10    1.7203   -1.9    0.6567]);% this works well for cueOnset
-        axis(p(np), [-2.5    1   -1.5   2   -2    2]); % SFN cueOnset
-        %axis(p(np), [ -1.5    0.8   -1    1   -1.5    1]); % SFN arrayOnset
+        %axis(p(np), [-2.5    1   -1.5   2   -2    2]); % SFN cueOnset
+        axis(p(np), [-2    1.5   -1   1.5   -2    1.5]); % try something large first
+        %        axis(p(np), [ -1.5    0.8   -1    1   -1.5    1]); % SFN arrayOnset
+        %axis(p(np), [ -0.2    0.2   -0.2    0.2   -0.2    0.2]); % cueOnset later PCs
         
         %if ~isempty( paxis )
         %    axis(p(np), paxis );
@@ -334,9 +324,9 @@ for nt = 1 : 5 :numel( window )
         l2([2 4 6]) = max( l(:, [2 4 6] ) );
         axis(p, l2 );
     end
-        filename= sprintf( '%s%04g.png', outdir, nt);
-        img = getframe(gcf);
-        savepng( img.cdata, filename, 4 );
+    filename= sprintf( '%s%04g.png', outdir, nt);
+    img = getframe(gcf);
+    savepng( img.cdata, filename, 4 );
     %h_SFN = gcf();
     %printpdf(h_SFN,int2str(nt) )
     % savefig(h_SFN, int2str(nt));

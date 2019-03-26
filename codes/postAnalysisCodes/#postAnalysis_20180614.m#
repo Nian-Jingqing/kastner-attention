@@ -26,11 +26,25 @@ phaseSpace(Projection,Summary);
 printFigs(gcf, '.', '-dpdf', 'Basic jPCA plot');
 
 %%
+%%
 buildRuns_20180614
 
 %%
 loadChoppedCombined_twoLocations
- 
+%% save the loaded data
+%out.alf = alf;
+%out.rfLoc = rfLoc;
+%out.binsize_rescaled = binsize_rescaled;
+%out.UEs = UEs;
+saveDir2 = '/snel/share/share/derived/kastner/LFADS_runs/pulvinar/Multi-day/multiDay_CO_AO_TD_HoldRel_JanToApr/postAnalysis/withExternalInput_20180614/loadedData/';
+cd(saveDir2)
+%saveName = 'allDays';
+%save(saveName, 'out');
+data = load('allDays');
+alf = data.out.alf;
+UEs = data.out.UEs;
+binsize_rescaled = data.out.binsize_rescaled;
+
 %% load and preprocess LFP
 loadLFP_twoLocations
 

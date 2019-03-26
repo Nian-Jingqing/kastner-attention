@@ -10,27 +10,39 @@ datasets(1).shortName = '170127';
 datasets(1).longName = '20170127';
 datasets(2).shortName = '170130';
 datasets(2).longName = '20170130';
-datasets(3).shortName = '170201';
-datasets(3).longName = '20170201';
-datasets(4).shortName = '170211';
-datasets(4).longName = '20170211';
-datasets(5).shortName = '170308';
-datasets(5).longName = '20170308';
-datasets(6).shortName = '170311';
-datasets(6).longName = '20170311';
+datasets(3).shortName = '170311';
+datasets(3).longName = '20170311';
+datasets(4).shortName = '170320';
+datasets(4).longName = '20170320';
+datasets(5).shortName = '170324';
+datasets(5).longName = '20170324';
+datasets(6).shortName = '170327';
+datasets(6).longName = '20170327';
+datasets(7).shortName = '170329';
+datasets(7).longName = '20170329';
+datasets(8).shortName = '170329';
+datasets(8).longName = '20170329';
+datasets(9).shortName = '170331';
+datasets(9).longName = '20170331';
+datasets(10).shortName = '170331';
+datasets(10).longName = '20170331';
 
 
 
 %% % load all the chopped and recombined data (post-LFADS)
-loadpath = ['/snel/share/share/derived/kastner/data_processed/pulvinar/' ...
-            'multi-unit/continuousOverlapChop/multiDay_JanToMar/withExternalInput_withLag/'];
+loadpath = ['/snel/share/share/derived/kastner/data_processed/pulvinar/multi-unit/continuousOverlapChop/multiDay_JanToMar/withExternalInput_withLag/twoLoc_bigN/'];
 
 % iterate over days, load each day and add it to a 'olapChopped' cell array
 clear olapChopped
-for nday = 1:numel( datasets )
+for nday = 1:numel( datasets )    
     disp( sprintf( 'loading chopped day %g / %g', nday, numel( datasets ) ) );
-    fname = sprintf( '%s%s_cueOnArrayOnTargetDim_HoldRel.mat', loadpath, datasets( nday ).shortName );
-
+    if nday == 7 || nday == 9
+        fname = sprintf( '%s%s_cueOnArrayOnTargetDim_HoldRel_1st.mat', loadpath, datasets( nday ).shortName );
+    elseif nday == 8 || nday == 10
+        fname = sprintf( '%s%s_cueOnArrayOnTargetDim_HoldRel_2nd.mat', loadpath, datasets( nday ).shortName );
+    else
+        fname = sprintf( '%s%s_cueOnArrayOnTargetDim_HoldRel.mat', loadpath, datasets( nday ).shortName );
+    end
     tmp = load( fname );
     olapChopped{ nday } = tmp.combinedData;
 end
@@ -40,12 +52,27 @@ end
 
 for nday = 1: numel( datasets )
     disp( sprintf( 'loading UEs day %g / %g', nday, numel( datasets ) ) );
-    loaddir = sprintf('/snel/share/share/data/kastner/pulvinar/multi-unit/preAligned/data_raw/MarToJun/v12/M%s/MUA_GRATINGS/', datasets( nday ).longName );
-    searchPattern = sprintf( '%sM%s*-evokedSpiking-*.mat', loaddir, datasets( nday ).longName );
-    tmp = dir( searchPattern );
-    disp( tmp(1).name );
-
-    fname = sprintf( '%s%s', loaddir, tmp(1).name );
+    if nday == 7 || nday == 8
+        loadroot = '/snel/share/share/data/kastner/pulvinar/multi-unit/preAligned/data_raw/MarToJun/v12/M20170329/MUA_GRATINGS/';
+        if nday == 7
+            fname = [loadroot 'M20170329_PUL_64M-g2-g3-g4-g5-evokedSpiking-v12.mat'];
+        elseif nday == 8
+            fname = [loadroot 'M20170329_PUL_64M-g6-g7-g8-g9-evokedSpiking-v12.mat'];
+        end
+    elseif nday == 9 || nday == 10
+        loadroot = '/snel/share/share/data/kastner/pulvinar/multi-unit/preAligned/data_raw/MarToJun/v12/M20170331/MUA_GRATINGS/';
+        if nday == 9
+            fname = [loadroot 'M20170331_PUL_64M-g3-g4-g5-g6-evokedSpiking-v12.mat'];
+        elseif nday == 10
+            fname = [loadroot 'M20170331_PUL_64M-g7-g8-evokedSpiking-v12.mat'];
+        end
+    else        
+        loaddir = sprintf('/snel/share/share/data/kastner/pulvinar/multi-unit/preAligned/data_raw/MarToJun/v12/M%s/MUA_GRATINGS/', datasets( nday ).longName );
+        searchPattern = sprintf( '%sM%s*-evokedSpiking-*.mat', loaddir, datasets( nday ).longName );
+        tmp = dir( searchPattern );
+        disp( tmp(1).name );
+        fname = sprintf( '%s%s', loaddir, tmp(1).name );
+    end    
     data = load(fname);
     UEs{nday} = data.UE;
 end
@@ -168,7 +195,7 @@ for nday = 1: numel( datasets )
 end    
 
 %% fix any weirdness with zeros in the ALF
-for nd = 1:6
+for nd = 1:10
     for ntr = 1:numel(alf{nd})
         alf{nd}(ntr).rates(alf{nd}(ntr).rates==0) = nan;
         alf{nd}(ntr).rt = UEs{nd}.rt( ntr );

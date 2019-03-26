@@ -96,11 +96,7 @@ window = round( [-300  0] / binsize_rescaled );
 whichfieldDimred = 'arrayDim';
 %whichfieldDimred = 'arrayOnset';
 
-window_lfp = round( [-296 32] / binsize_rescaled );
-
-whichfieldJPCA = 'arrayDim';
-window_jPCA = round( [-600  200] / binsize_rescaled );
-
+window_lfp = round( [400 700] / binsize_rescaled );
 
 %whichfieldPlot = 'arrayDim';
 %newWindow = round( [-900  650] / binsize_rescaled );
@@ -117,33 +113,12 @@ newWindow = round( [-200  1100] / binsize_rescaled );
 
 %% get factors into struct to prepare for jPCA
 timePoints = window(1):window(2);
-timePoints_jPCA = window_jPCA(1):window_jPCA(2);
 timePoints_lfp = window_lfp(1):window_lfp(2);
 %timePoints_raw = window_raw(1):window_raw(2);
 numBins = numel( timePoints);
-numBins_jPCA = numel( timePoints_jPCA );
 numFactors = size( alf{ nday }(1).rates, 1);
 totalTrialsToKeep = sum( cellfun( @sum, trialsToKeep ) );
 %allFactors = zeros( numFactors, numBins * totalTrialsToKeep );
-
-%%
-for nday = 6
-    ind = 1;
-    trialsToKeepInds{ nday } = find( trialsToKeep{ nday } );
-    for itr = 1:numel( trialsToKeepInds{ nday } )
-        ntr = trialsToKeepInds{ nday }( itr );
-        allFactors( :, (0:numBins-1) + ind ) = alf{ nday }( ntr ).rates( :, alf{ nday }( ntr ).( whichfieldDimred ) + timePoints );
-        ind = ind + numBins;
-    end
-end
-
-%%
-%% do pca
-meanFactors = mean( allFactors' );
-
-[pca_proj_mat, pc_data] = pca( allFactors', 'NumComponents', 10);
-
-
 %%
 clear dataForJPCA
 dataForJPCA(totalTrialsToKeep).A = 0;
@@ -153,15 +128,9 @@ for nday = 1:numel( alf )
     trialsToKeepInds{ nday } = find( trialsToKeep{ nday } );
     for itr = 1:numel( trialsToKeepInds{ nday } )
         ntr = trialsToKeepInds{ nday }( itr );
-        % dataForJPCA(ind).A = alf{ nday }( ntr ).rates( :, alf{ nday }( ntr ).( whichfieldJPCA ) + timePoints_jPCA );
-        % dataForJPCA(ind).A = dataForJPCA(ind).A';
-        frep = alf{ nday }( ntr ).rates( :, alf{ nday }( ntr ).( whichfieldJPCA ) + timePoints_jPCA );
-        % mean center
-        frep = frep - repmat( meanFactors(:), 1, numBins_jPCA );
-        % project this data
-        dim_reduced_data = pca_proj_mat' * frep;
-        dataForJPCA(ind).A = dim_reduced_data(6:9,:)';
-        dataForJPCA(ind).times = timePoints_jPCA*binsize_rescaled;
+        dataForJPCA(ind).A = alf{ nday }( ntr ).rates( :, alf{ nday }( ntr ).( whichfieldDimred ) + timePoints );
+        dataForJPCA(ind).A = dataForJPCA(ind).A';
+        dataForJPCA(ind).times = timePoints*binsize_rescaled;
         dataForJPCA(ind).times = dataForJPCA(ind).times';
         ind = ind + 1;
     end
@@ -175,15 +144,15 @@ for nday = 1:numel( alf )
     trialsToKeepInds{ nday } = find( trialsToKeep{ nday } );
     for itr = 1:numel( trialsToKeepInds{ nday } )
         ntr = trialsToKeepInds{ nday }( itr );
-        FRandSpiking(ind).FR = alf{ nday }( ntr ).FR( :, alf{ nday }( ntr ).( whichfieldDimred ) + timePoints_lfp );
-        FRandSpiking(ind).spiking = alf{ nday }( ntr ).spikes( :, alf{ nday }( ntr ).( whichfieldDimred ) + timePoints_lfp );
+        FRandSpiking(ind).FR = alf{ nday }( ntr ).FR( :, alf{ nday }( ntr ).( whichfieldDimred ) + timePoints );
+        FRandSpiking(ind).spiking = alf{ nday }( ntr ).spikes( :, alf{ nday }( ntr ).( whichfieldDimred ) + timePoints );
         ind = ind + 1;
     end
 end
 
 %% pick up correct trials, filter, resample and chop LFP
-filtHighCutoff = 6;
-filtLowCutoff = 3;
+filtHighCutoff = 8;
+filtLowCutoff = 2;
 Fs = 1000;
 chopResampled_lfp(totalTrialsToKeep).lfps = 0;
 ind = 1;
@@ -204,23 +173,12 @@ jPCA_params.softenNorm = 5;
 jPCA_params.suppressBWrosettes = true;
 jPCA_params.suppressHistograms = true;
 %%
-times = -296:8:32;
-jPCA_params.numPCs = 4;
+times = -200:8:-16;
+jPCA_params.numPCs = 12;
 [Projection, Summary] = jPCA(dataForJPCA, times, jPCA_params);
 %%
-plotParams.planes2plot = [ 1 2 ];
+plotParams.planes2plot = [ 1 2 3 ];
 phaseSpace(Projection,Summary, plotParams);
-
-%%
-f1 = figure;
-for i = 1:10
-    subplot(5,2,i);
-    plot(Projection(i+499).proj(:,1), 'r');
-    hold on
-    plot(Projection(i+499).proj(:,2), 'b');
-    hold on
-end
-
 
 %%
 savedir = '/snel/share/share/derived/kastner/LFADS_runs/pulvinar/Multi-day/multiDay_CO_AO_TD_HoldRel_JanToApr/postAnalysis/withExternalInput_20180614/jPCA/';
@@ -240,60 +198,18 @@ printFigs(gcf, '.', '-dpdf', '400To500ms_plane1');
 
 %%
 trialsToKeepEachDay = cellfun( @sum, trialsToKeep );
-
-%% center the data
-% for LFP
-%for i = 1:numel(chopResampled_lfp)
-%    meanThisTrial = meanchopResampled_lfp(i).lfps
-
-%% For LFP data
+%%
 maxLag = 80;
 ind = 0;
 %crossCorr{ numel( alf ) } = [];
 crossCorr = {};
-crossCorr_shuffled = {};
 for nday = 1:numel( alf )
     trialIds = ( ind + 1 ):( ind + trialsToKeepEachDay( nday ));
     for n = 1 : size(lfp{ nday }(1).lfps, 1)
         for nTrial = 1 : numel( trialIds )
-            trialsToChoose = trialIds;
-            trialsToChoose(nTrial) = [];
-            trialForShuffle = randsample(trialsToChoose, 1);
             for dimId = 1 : 4
                 fieldToStore = ['dim' num2str(dimId)];
-                sig1 = Projection( trialIds( nTrial ) ).proj( :, dimId)';
-                sig2 = chopResampled_lfp( trialIds( nTrial ) ).lfps( n, :);
-                sig3 = chopResampled_lfp( trialForShuffle ).lfps( n, :);
-                sig1 = sig1-mean(sig1);
-                sig2 = sig2-mean(sig2);
-                sig3 = sig3-mean(sig3);
-                
-                crossCorr{ nday }( n ).( fieldToStore )( nTrial, :) = xcorr( sig1, sig2, maxLag/binsize_rescaled);
-                crossCorr_shuffled{ nday }( n ).( fieldToStore )( nTrial, :) = xcorr(sig1, sig3, maxLag/binsize_rescaled);
-            end
-        end
-    end
-    ind = ind + trialsToKeepEachDay( nday );
-end
-
-
-%% For spiking data
-maxLag = 80;
-ind = 0;
-%crossCorr{ numel( alf ) } = [];
-crossCorr = {};
-crossCorr_shuffled = {};
-for nday = 1:numel( alf )
-    trialIds = ( ind + 1 ):( ind + trialsToKeepEachDay( nday ));
-    for n = 1 : size(alf{ nday }(1).spikes, 1)
-        for nTrial = 1 : numel( trialIds )
-            trialsToChoose = trialIds;
-            trialsToChoose(nTrial) = [];
-            trialForShuffle = randsample(trialsToChoose, 1);
-            for dimId = 1 : 4
-                fieldToStore = ['dim' num2str(dimId)];
-                crossCorr{ nday }( n ).( fieldToStore )( nTrial, :) = xcorr(FRandSpiking( trialIds( nTrial ) ).spiking( n, :), Projection( trialIds( nTrial ) ).proj( :, dimId)', maxLag/binsize_rescaled);
-                crossCorr_shuffled{ nday }( n ).( fieldToStore )( nTrial, :) = xcorr( FRandSpiking( trialForShuffle ).spiking( n, :), Projection(trialIds( nTrial ) ).proj( :, dimId)', maxLag/binsize_rescaled);
+                crossCorr{ nday }( n ).( fieldToStore )( nTrial, :) = xcorr(Projection( trialIds( nTrial ) ).proj( :, dimId)', chopResampled_lfp( trialIds( nTrial ) ).lfps( n, :), maxLag/binsize_rescaled);
             end
         end
     end
@@ -312,8 +228,7 @@ for nday = 1 : numel( crossCorr )
     for n = 1 : numel( crossCorr{ nday } )
         f1 = figure;
         sp1 = subplot(2,2,1);
-        shadedErrorBar([], crossCorr{ nday }( n ).dim1, {@mean, @(x) std(x)./sqrt(size(crossCorr{ nday }( n ).dim1, 1)) }, 'lineProps', '-r');
-        shadedErrorBar([], crossCorr_shuffled{ nday }( n ).dim1, {@mean, @(x) std(x)./sqrt(size(crossCorr_shuffled{ nday }( n ).dim1, 1)) }, 'lineProps', {'Color',[0.6, 0.6, 0.6]});        
+        shadedErrorBar([], crossCorr{ nday }( n ).dim1, {@mean, @(x) std(x)./sqrt(size(crossCorr{ nday }( n ).dim1, 1)) }, 'lineProps', '-r')
         set(gca,'XTick',[1 0.5*size(crossCorr{ nday }( n ).dim1, 2) size(crossCorr{ nday }( n ).dim1, 2)]);
         timeStrLeft = ['-', timeLagStr];
         timeStrRight = ['+', timeLagStr];
@@ -324,8 +239,7 @@ for nday = 1 : numel( crossCorr )
         hold on
         
         sp2 = subplot(2,2,2);
-        shadedErrorBar([], crossCorr{ nday }( n ).dim2, {@mean, @(x) std(x)./sqrt(size(crossCorr{ nday }( n ).dim2, 1)) }, 'lineProps', '-r');
-        shadedErrorBar([], crossCorr_shuffled{ nday }( n ).dim2, {@mean, @(x) std(x)./sqrt(size(crossCorr_shuffled{ nday }( n ).dim2, 1)) }, 'lineProps', {'Color',[0.6, 0.6, 0.6]});        
+        shadedErrorBar([], crossCorr{ nday }( n ).dim2, {@mean, @(x) std(x)./sqrt(size(crossCorr{ nday }( n ).dim2, 1)) }, 'lineProps', '-r')
         set(gca,'XTick',[1 0.5*size(crossCorr{ nday }( n ).dim2, 2) size(crossCorr{ nday }( n ).dim2, 2)]);
         timeStrLeft = ['-', timeLagStr];
         timeStrRight = ['+', timeLagStr];
@@ -336,8 +250,7 @@ for nday = 1 : numel( crossCorr )
         hold on
 
         sp3 = subplot(2,2,3)
-        shadedErrorBar([], crossCorr{ nday }( n ).dim3, {@mean, @(x) std(x)./sqrt(size(crossCorr{ nday }( n ).dim3, 1)) }, 'lineProps', '-r');
-        shadedErrorBar([], crossCorr_shuffled{ nday }( n ).dim3, {@mean, @(x) std(x)./sqrt(size(crossCorr_shuffled{ nday }( n ).dim3, 1)) }, 'lineProps', {'Color',[0.6, 0.6, 0.6]});        
+        shadedErrorBar([], crossCorr{ nday }( n ).dim3, {@mean, @(x) std(x)./sqrt(size(crossCorr{ nday }( n ).dim3, 1)) }, 'lineProps', '-r')
         set(gca,'XTick',[1 0.5*size(crossCorr{ nday }( n ).dim3, 2) size(crossCorr{ nday }( n ).dim3, 2)]);
         timeStrLeft = ['-', timeLagStr];
         timeStrRight = ['+', timeLagStr];
@@ -348,8 +261,7 @@ for nday = 1 : numel( crossCorr )
         hold on
 
         sp4 = subplot(2,2,4)
-        shadedErrorBar([], crossCorr{ nday }( n ).dim4, {@mean, @(x) std(x)./sqrt(size(crossCorr{ nday }( n ).dim4, 1)) }, 'lineProps', '-r');
-        shadedErrorBar([], crossCorr_shuffled{ nday }( n ).dim4, {@mean, @(x) std(x)./sqrt(size(crossCorr_shuffled{ nday }( n ).dim4, 1)) }, 'lineProps', {'Color',[0.6, 0.6, 0.6]});
+        shadedErrorBar([], crossCorr{ nday }( n ).dim4, {@mean, @(x) std(x)./sqrt(size(crossCorr{ nday }( n ).dim4, 1)) }, 'lineProps', '-r')
         set(gca,'XTick',[1 0.5*size(crossCorr{ nday }( n ).dim4, 2) size(crossCorr{ nday }( n ).dim4, 2)]);
         timeStrLeft = ['-', timeLagStr];
         timeStrRight = ['+', timeLagStr];

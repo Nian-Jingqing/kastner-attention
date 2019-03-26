@@ -1,0 +1,1 @@
+saveDataDir = '/snel/share/share/derived/kastner/LFADS_runs/pulvinar/Multi-day/multiDay_CO_AO_TD_HoldRel_JanToApr/postAnalysis/withExternalInput_20180614/PSTH/SFN/data/';
