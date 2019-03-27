@@ -4,24 +4,22 @@ switch user
   case 'fzhu23'
     % add paths for Feng
     addpath('/snel/home/fzhu23/bin/LFADS/lfads-run-manager/src')
-    addpath('/snel/home/fzhu23/Projects/Pulvinar/old_pulvinarRepo/Kastner_Attention/myTools/kastner_analysis_tools')
-    addpath('/snel/home/fzhu23/Projects/Pulvinar/old_pulvinarRepo/Kastner_Attention/codes')
-    addpath('/snel/home/fzhu23/Projects/Pulvinar/old_pulvinarRepo/Kastner_Attention/myTools')
-    addpath('/snel/home/fzhu23/Projects/Pulvinar/old_pulvinarRepo/Kastner_Attention/myTools/jPCA_tools')
-    addpath('/snel/home/fzhu23/Projects/Pulvinar/old_pulvinarRepo/Kastner_Attention/codes/postAnalysisCodes')
-    % jpca paths
-    addpath('/snel/home/fzhu23/Projects/Pulvinar/old_pulvinarRepo/Kastner_Attention/myTools/jPCA_tools/fromMarksLibraries')
-    addpath('/snel/home/fzhu23/Projects/Pulvinar/old_pulvinarRepo/Kastner_Attention/myTools/jPCA_tools/CircStat2010d')
-
+    pulvinarBase = '/snel/home/fzhu23/Projects/Pulvinar/old_pulvinarRepo/Kastner_Attention';
+    
   case 'cpandar'
     % add paths for Feng
     addpath('/snel/home/cpandar/c/feng_lfads-run-manager/src');
-    addpath('/snel/home/cpandar/c/Kastner_Attention/myTools/kastner_analysis_tools')
-    addpath('/snel/home/cpandar/c/Kastner_Attention/codes')
-    addpath('/snel/home/cpandar/c/Kastner_Attention/myTools')
-    addpath('/snel/home/cpandar/c/Kastner_Attention/myTools/jPCA_tools')
-    addpath('/snel/home/cpandar/c/Kastner_Attention/codes/postAnalysisCodes')
-    % jpca paths
-    addpath('/snel/home/cpandar/c/Kastner_Attention/myTools/jPCA_tools/fromMarksLibraries')
-    addpath('/snel/home/cpandar/c/Kastner_Attention/myTools/jPCA_tools/CircStat2010d')
+    pulvinarBase = '/snel/home/cpandar/c/Kastner_Attention';
 end
+
+addpath( fullfile( pulvinarBase, '/Matlab_Offline_Files_SDK/') );
+addpath( fullfile( pulvinarBase, '/myTools/kastner_analysis_tools') )
+addpath( fullfile( pulvinarBase, '/myTools') )
+addpath( fullfile( pulvinarBase, '/myTools/rawDataProcessing') )
+addpath( fullfile( pulvinarBase, '/codes') )
+addpath( fullfile( pulvinarBase, '/codes/broadbandProcessing') )
+addpath( fullfile( pulvinarBase, '/codes/postAnalysisCodes') )
+% jpca paths
+addpath( fullfile( pulvinarBase, '/myTools/jPCA_tools') )
+addpath( fullfile( pulvinarBase, '/myTools/jPCA_tools/fromMarksLibraries') )
+addpath( fullfile( pulvinarBase, '/myTools/jPCA_tools/CircStat2010d') )

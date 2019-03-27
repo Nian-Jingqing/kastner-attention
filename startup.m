@@ -1,0 +1,2 @@
+%%
+setPaths(getUsername)
