@@ -1,4 +1,4 @@
-function [avg_rates, raster_tensor] = preparePSTH_Manoj(day_struct, infield, trial_indices, event_times, timePoints, rebinSize)
+function [avg_rates, raster_tensor, stderror] = preparePSTH_Manoj(day_struct, infield, trial_indices, event_times, timePoints, rebinSize)
 % This function compute averaged firing rate across trials for each neuron, as well as organize the data into a tensor (n x T x time)
 %   Detailed explanation goes here
 % this function takes in a structure where each element is a trial, with the
@@ -27,6 +27,8 @@ if strcmp(infield, 'rates')
     avg_rates = squeeze(sum(raster_tensor, 2))*(1/numel(keepTrials_struct));
 else
     avg_rates = squeeze(sum(raster_tensor, 2))*(1/numel(keepTrials_struct))*(1000/rebinSize);
+    tmp_std = squeeze(std(raster_tensor,0, 2))*(1000/rebinSize);
+    stderror = tmp_std/sqrt(numel(keepTrials_struct));
     raster_tensor = raster_tensor*(1000/rebinSize);
 end
 

@@ -1,4 +1,4 @@
-function spikeband = broadband2streamMinMax(inputfile, outputfile, ...
+function sbbpikeband = broadband2streamMinMax(inputfile, outputfile, ...
                                             options)
     % BROADBAND2STREAMMINMAX
     % 
@@ -219,7 +219,7 @@ while currentBufferStartInd < endIndex
     % the beginning and end of this buffer are to be considered invalid
     validData = spikeBandData( EDGE_EFFECT_BUFFER + 1 : end-EDGE_EFFECT_BUFFER, : );
 
-    keyboard
+    %keyboard
 
     % there is also an EDGE_EFFECT_BUFFER length segment in the beginning
     % that was loaded with the last buffer, but has only been processed in
@@ -281,7 +281,7 @@ while currentBufferStartInd < endIndex
     end
     spikeband.meanSquared( indsToStore ) = meanSquared( keepInds );
     spikeband.meanSquaredChannel( indsToStore ) = meanSquaredChannel( keepInds );
-
+    
     
     % where should next buffer start
     currentBufferStartInd = currentBufferEndInd + 1;
@@ -290,4 +290,4 @@ while currentBufferStartInd < endIndex
 end
 
 %save
-save(outputfile,'spikeband', '-v6');
+save(outputfile,'spikeband');

@@ -7,7 +7,7 @@ switch user
     pulvinarBase = '/snel/home/fzhu23/Projects/Pulvinar/old_pulvinarRepo/Kastner_Attention';
     
   case 'cpandar'
-    % add paths for Feng
+    % add paths for Chethan
     addpath('/snel/home/cpandar/c/feng_lfads-run-manager/src');
     pulvinarBase = '/snel/home/cpandar/c/Kastner_Attention';
 end
@@ -19,6 +19,7 @@ addpath( fullfile( pulvinarBase, '/myTools/rawDataProcessing') )
 addpath( fullfile( pulvinarBase, '/codes') )
 addpath( fullfile( pulvinarBase, '/codes/broadbandProcessing') )
 addpath( fullfile( pulvinarBase, '/codes/postAnalysisCodes') )
+addpath( fullfile( pulvinarBase, '/codes/Manoj') )
 % jpca paths
 addpath( fullfile( pulvinarBase, '/myTools/jPCA_tools') )
 addpath( fullfile( pulvinarBase, '/myTools/jPCA_tools/fromMarksLibraries') )
