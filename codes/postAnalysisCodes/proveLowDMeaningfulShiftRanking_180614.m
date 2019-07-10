@@ -312,12 +312,13 @@ end
 
 %% plot all-neuron avg without stderr
 f2 = figure
-x_value = 1:numFactors + 2;
-scatter(x_value, LL, 'filled');
+%x_value = 0:numFactors + 1;
+x_value = 0:numFactors;
+scatter(x_value, LL(1:end-1), 'filled');
 ylabel('log likelihood');
 xlabel('non-avg dimensions');
 title('Avg Log Likelihood Across Neurons');
-print(f2, 'all_neurons_avg', '-dpng');
+%print(f2, 'all_neurons_avg', '-dpng');
 
 %% plot all-neuron avg with error bar
 f3 = figure
@@ -336,18 +337,20 @@ for nday = 1:6
         apd{nday}(tr).rates_afterPC_transform = exp(tmp(neuronId,:));
     end
 end
+
 %%
-f1 = figure
+f4 = figure
 s1 = subplot(1,2,1);
-plot(250*apd{1}(1).rates_afterPC_transform(1,:));
+plot(250*apd{6}(34).rates_afterPC_transform(17,:));
 xlabel('timePoints')
 ylabel('rate (per second)')
 title('Reconstructed rates after PC transform')
 s2 = subplot(1,2,2);
-plot(apd{1}(1).FR(1,:), 'r');
+plot(apd{6}(34).FR(17,:), 'r');
 xlabel('timePoints')
 ylabel('rate (per second)')
 title('LFADS Output rates')
-suptitle('Day 1 - trial 1 - neuron 1')
-set(f1, 'Position', [131 417 1653 439]);
+suptitle('Day 6 - trial 34 - neuron 17')
+set(f4, 'Position', [131 417 1653 439]);
+print(f4, 'FR_comparison_6', '-dpng');
 

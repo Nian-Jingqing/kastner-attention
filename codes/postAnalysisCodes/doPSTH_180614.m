@@ -1,6 +1,20 @@
 %%
+datasets(1).shortName = '170127';
+datasets(1).longName = '20170127';
+datasets(2).shortName = '170130';
+datasets(2).longName = '20170130';
+datasets(3).shortName = '170201';
+datasets(3).longName = '20170201';
+datasets(4).shortName = '170211';
+datasets(4).longName = '20170211';
+datasets(5).shortName = '170308';
+datasets(5).longName = '20170308';
+datasets(6).shortName = '170311';
+datasets(6).longName = '20170311';
+
+%%
 loadpath = ['/snel/share/share/derived/kastner/data_processed/pulvinar/' ...
-            'multi-unit/continuousOverlapChop/multiDay_JanToMar/withExternalInput_withLag/170127_cueOnArrayOnTargetDim_HoldRel.mat'];
+            'multi-unit/continuousOverlapChop/multiDay_JanToMar/withExternalInput_withLag/170308_cueOnArrayOnTargetDim_HoldRel.mat'];
 
 olapChopped = load(loadpath);
 olapChopped = olapChopped.combinedData;
@@ -13,20 +27,20 @@ out = olapChopped.r.generate_overlap_chop_lfads_data( trial_time_ms, trial_olap_
 
 %% get LFADS data
 r_id = 1;
-day_id = 1;
+day_id = 5;
 run = rc2.runs(r_id);
-r_lfads = olapChopped.r.get_output_from_lfads(run, day_id, trial_time_ms, trial_olap_ms, 'factors');
+r_lfads = olapChopped.r.get_output_from_lfads(run, day_id, trial_time_ms, trial_olap_ms, 'rates');
 assembled_lfads = R.Rstruct(r_lfads);
 %%
-Day1_W = h5read(['/snel/share/share/derived/kastner/LFADS_runs/pulvinar/Multi-day/multiDay_CO_AO_TD_HoldRel_JanToApr/runs/withExternalInput_20180614/param_SGorjS/all/pbt_run/g061_w19/model_params'], '/LFADS_170127_cueOnArrayOnTargetDim_HoldRel.h5_out_fac_linear_W:0' );
-Day1_b = h5read(['/snel/share/share/derived/kastner/LFADS_runs/pulvinar/Multi-day/multiDay_CO_AO_TD_HoldRel_JanToApr/runs/withExternalInput_20180614/param_SGorjS/all/pbt_run/g061_w19/model_params'], '/LFADS_170127_cueOnArrayOnTargetDim_HoldRel.h5_out_fac_linear_b:0' );
-r_lfads_fromFactors(numel(r_lfads)).rates = 0;
-for i = 1:numel(r_lfads)
-    %    r_lfads_fromFactors(i).rates = exp([Day1_W Day1_b] * [r_lfads(i).rates' ones(size(r_lfads(i).rates,2), 1)]' );
-    r_lfads_fromFactors(i).rates = exp(Day1_W*r_lfads(i).rates + Day1_b);
-end
-clear assembled_lfads;
-assembled_lfads = R.Rstruct(r_lfads_fromFactors);
+%Day1_W = h5read(['/snel/share/share/derived/kastner/LFADS_runs/pulvinar/Multi-day/multiDay_CO_AO_TD_HoldRel_JanToApr/runs/withExternalInput_20180614/param_SGorjS/all/pbt_run/g061_w19/model_params'], '/LFADS_170127_cueOnArrayOnTargetDim_HoldRel.h5_out_fac_linear_W:0' );
+%Day1_b = h5read(['/snel/share/share/derived/kastner/LFADS_runs/pulvinar/Multi-day/multiDay_CO_AO_TD_HoldRel_JanToApr/runs/withExternalInput_20180614/param_SGorjS/all/pbt_run/g061_w19/model_params'], '/LFADS_170127_cueOnArrayOnTargetDim_HoldRel.h5_out_fac_linear_b:0' );
+%r_lfads_fromFactors(numel(r_lfads)).rates = 0;
+%for i = 1:numel(r_lfads)
+    % %    r_lfads_fromFactors(i).rates = exp([Day1_W Day1_b] * [r_lfads(i).rates' ones(size(r_lfads(i).rates,2), 1)]' );
+    %    r_lfads_fromFactors(i).rates = exp(Day1_W*r_lfads(i).rates + Day1_b);
+    %end
+    %clear assembled_lfads;
+    %assembled_lfads = R.Rstruct(r_lfads_fromFactors);
 %%
 tot_spikes = out.counts;
 % nPieces = size(tot_spikes, 1);
@@ -67,9 +81,16 @@ end
 %%
 assembled_real = R.Rstruct(spikes);
 
-%% get timing info
-loadpath = ['/snel/share/share/data/kastner/pulvinar/multi-unit/preAligned/data_raw/MarToJun/v10/M20170127/Gratings/M20170127_PUL_9M-g3-g4-g5-evokedSpiking-v10.mat'];
-data = load(loadpath);
+%% load the UE data (ryan's stuff)
+disp( sprintf( 'loading UEs day %g / %g', day_id, numel( datasets ) ) );
+%    loaddir = sprintf('/snel/share/share/data/kastner/pulvinar/multi-unit/preAligned/data_raw/MarToJun/v12/M%s/MUA_GRATINGS/', datasets( nday ).longName );
+loaddir = sprintf('/snel/share/share/data/kastner/pulvinar/multi-unit/preAligned/data_raw/MarToJun/v10/M%s/Gratings/', datasets( day_id ).longName );
+searchPattern = sprintf( '%sM%s*-evokedSpiking-*.mat', loaddir, datasets( day_id ).longName );
+tmp = dir( searchPattern );
+disp( tmp(1).name );
+
+fname = sprintf( '%s%s', loaddir, tmp(1).name );
+data = load(fname);
 UE = data.UE;
 clear data
 
@@ -185,7 +206,7 @@ binsize = par.spikeBinMs;
 %% select good neurons (v12) - new good neurons after May 21, 18: why new good neurons???
 % still need to update the 170320 - 170407 *****
 
-nIndices = [1 4 6 7 8 11 12 13 14 16 17 19 20 21 23 24 25 26 27 29 30 31 32];
+%nIndices = [1 4 6 7 8 11 12 13 14 16 17 19 20 21 23 24 25 26 27 29 30 31 32];
 % % 170127
 % nIndices = [1 2 4 5 6 7 8 9 12 14 15 16 17 19 20 23 24 25 26 29 30 31 32];
 % % 170130
@@ -193,7 +214,7 @@ nIndices = [1 4 6 7 8 11 12 13 14 16 17 19 20 21 23 24 25 26 27 29 30 31 32];
 % % 170201
 % nIndices = [3 4 5 7 11 12 15 17 18 23 28 30];
 % % 170211
-%nIndices = [9 15 18 20 24 28 30 31 32 34 37 38 39 42 43 44 45 46 47 48 52 54 55 58 60 62 63 64];
+nIndices = [9 15 18 20 24 28 30 31 32 34 37 38 39 42 43 44 45 46 47 48 52 54 55 58 60 62 63 64];
 % % 170308
 %nIndices = [2 3 5 8 9 11 13 17 20 22 25 26 32 33 36 38 42 43 50 54 55 56 57 58];
 % % 170311
@@ -216,12 +237,26 @@ nIndices = [1 4 6 7 8 11 12 13 14 16 17 19 20 21 23 24 25 26 27 29 30 31 32];
 %% plots of avg neuron firing rate and avg LFADS rate for different cue locations， plus spiking rasters
 %savedirOne = ['/snel/share/share/derived/kastner/LFADS_runs/pulvinar/Multi-day/multiDa%y_CO_AO_TD_HoldRel_JanToApr/' ...
 %    'postAnalysis/withExternalInput_20180614/PSTH/NoSmoothing/arrayOnset/170130/'];
-savedirOne = '/snel/share/share/derived/kastner/LFADS_runs/pulvinar/Multi-day/multiDay_CO_AO_TD_HoldRel_JanToApr/postAnalysis/withExternalInput_20180614/PSTH/tmp';
+
+savedirOne = '/snel/share/share/derived/kastner/LFADS_runs/pulvinar/Multi-day/multiDay_CO_AO_TD_HoldRel_JanToApr/postAnalysis/withExternalInput_20180614/PSTH/SAND/arrayOnset/170308';
+if ~isdir( savedirOne )
+    mkdir( savedirOne );
+end
 
 %cd(savedirOne);
 clear set
-plottingPSTHs(AvgFiringRate_InRF_cue_real,AvgFiringRate_OffRF_cue_real, SmoothedSpikingMatrix_cue_real, AvgFiringRate_InRF_cue_lfads,AvgFiringRate_OffRF_cue_lfads, SmoothedSpikingMatrix_cue_lfads, ...
-              TrialIndexInRF_cue_real, TrialIndexOffRF_cue_real, nTimesLFADS, 'cueOnset', nIndices, savedirOne, 3/10, '-300ms', '+700ms'  )
+plottingPSTHs_1(AvgFiringRate_InRF_array_real,AvgFiringRate_OffRF_array_real, SmoothedSpikingMatrix_array_real, AvgFiringRate_InRF_array_lfads,AvgFiringRate_OffRF_array_lfads, SmoothedSpikingMatrix_array_lfads, ...
+              TrialIndexInRF_array_real, TrialIndexOffRF_array_real, nTimesLFADS, 'arrayOnset', nIndices, savedirOne, 3/10, '-300ms', '+700ms'  )
+
+savedirTwo = '/snel/share/share/derived/kastner/LFADS_runs/pulvinar/Multi-day/multiDay_CO_AO_TD_HoldRel_JanToApr/postAnalysis/withExternalInput_20180614/PSTH/SAND/cueOnset/170308';
+if ~isdir( savedirTwo )
+    mkdir( savedirTwo );
+end
+
+%cd(savedirOne);
+clear set
+plottingPSTHs_1(AvgFiringRate_InRF_cue_real,AvgFiringRate_OffRF_cue_real, SmoothedSpikingMatrix_cue_real, AvgFiringRate_InRF_cue_lfads,AvgFiringRate_OffRF_cue_lfads, SmoothedSpikingMatrix_cue_lfads, ...
+              TrialIndexInRF_cue_real, TrialIndexOffRF_cue_real, nTimesLFADS, 'cueOnset', nIndices, savedirTwo, 3/10, '-300ms', '+700ms'  )
 
 %%
 %run180614.AvgFiringRate_InRF_cue_real = AvgFiringRate_InRF_cue_real;

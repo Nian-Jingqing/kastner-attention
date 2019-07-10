@@ -24,12 +24,14 @@ datasets(6).longName = '20170311';
 %% % load all the chopped and recombined data (post-LFADS)
 loadpath = ['/snel/share/share/derived/kastner/data_processed/pulvinar/' ...
             'multi-unit/continuousOverlapChop/multiDay_JanToMar/withExternalInput_withLag/'];
+loadpath_rmCorr = ['/snel/share/share/derived/kastner/data_processed/pulvinar/' ...
+            'multi-unit/continuousOverlapChop/multiDay_JanToMar/withExternalInput_withLag/180614data_rm_highCorr/'];
 
 % iterate over days, load each day and add it to a 'olapChopped' cell array
 clear olapChopped
 for nday = 1:numel( datasets )
     disp( sprintf( 'loading chopped day %g / %g', nday, numel( datasets ) ) );
-    fname = sprintf( '%s%s_cueOnArrayOnTargetDim_HoldRel.mat', loadpath, datasets( nday ).shortName );
+    fname = sprintf( '%s%s_cueOnArrayOnTargetDim_HoldRel.mat', loadpath_rmCorr, datasets( nday ).shortName );
 
     tmp = load( fname );
     olapChopped{ nday } = tmp.combinedData;
@@ -41,6 +43,7 @@ end
 for nday = 1: numel( datasets )
     disp( sprintf( 'loading UEs day %g / %g', nday, numel( datasets ) ) );
     loaddir = sprintf('/snel/share/share/data/kastner/pulvinar/multi-unit/preAligned/data_raw/MarToJun/v12/M%s/MUA_GRATINGS/', datasets( nday ).longName );
+    %loaddir = sprintf('/snel/share/share/data/kastner/pulvinar/multi-unit/preAligned/data_raw/MarToJun/v10/M%s/Gratings/', datasets( nday ).longName );
     searchPattern = sprintf( '%sM%s*-evokedSpiking-*.mat', loaddir, datasets( nday ).longName );
     tmp = dir( searchPattern );
     disp( tmp(1).name );
@@ -57,7 +60,7 @@ r_id = 1;
 run = rc2.runs(r_id);
 binsize = par.spikeBinMs;
 % rebin the data by some factor
-rfactor = 1;
+rfactor = 2;
 binsize_rescaled = binsize * rfactor;
 
 use_rates = false;

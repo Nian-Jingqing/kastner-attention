@@ -178,6 +178,7 @@ end
 
 smallA = bigA(analyzeMask,:);
 [PCvectors,rawScores] = princomp(smallA,'econ');  % apply PCA to the analyzed times
+                                                  %[PCvectors,rawScores] = pca(smallA,'econ');  % apply PCA to the analyzed times
 meanFReachNeuron = mean(smallA);  % this will be kept for use by future attempts to project onto the PCs
 
 % these are the directions in the high-D space (the PCs themselves)
@@ -396,8 +397,9 @@ function Vr = getRealVs(V,evals)
     Vr = Vr / sqrt(2);
 
     % now get axes aligned so that plan is spread mostly along the horizontal axis
-    testProj = (Vr'*Ared(1:numAnalyzedTimes:end,:)')'; % just picks out the plan times
+    testProj = (Vr'*Ared(1:numAnalyzedTimes:end,:)')'; % just picks out
     rotV = princomp(testProj);
+    %rotV = pca(testProj);
     crossProd = cross([rotV(:,1);0], [rotV(:,2);0]);
     if crossProd(3) < 0, rotV(:,2) = -rotV(:,2); end   % make sure the second vector is 90 degrees clockwise from the first
     Vr = Vr*rotV; 

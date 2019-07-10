@@ -9,6 +9,7 @@ classdef RunParams < PBTExperiment.RunParams
        nIndices = [];
        c_keep_ratio = 1.0
        c_ext_input_dim uint16 = 0
+       c_ext_input_rnn_dim uint16 = 0
    end
    
    methods
