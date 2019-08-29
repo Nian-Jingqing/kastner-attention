@@ -63,3 +63,13 @@ pbt_run_path_11 = '/snel/share/share/derived/kastner/LFADS_runs/pulvinar/Multi-d
 results_dir_11 = '/snel/share/share/derived/kastner/LFADS_runs/pulvinar/Multi-day/multiDay_CO_AO_TD_HoldRel_JanToApr/runs/reRun180614_20190623/param_Z8wEMU/all/tmp_smoothed/';
 PBT_analysis.make_pbt_run_plots(pbt_run_path_11, results_dir_11)
 
+%% plot pbt results for 190626
+pbt_run_path_12 = '/snel/share/share/derived/kastner/LFADS_runs/pulvinar/Multi-day/multiDay_CO_AO_TD_HoldRel_JanToApr/runs/reRun180614_20190626/param__sTJ-Z/all/pbt_run/';
+results_dir_12 = '/snel/share/share/derived/kastner/LFADS_runs/pulvinar/Multi-day/multiDay_CO_AO_TD_HoldRel_JanToApr/runs/reRun180614_20190626/param__sTJ-Z/all/tmp_smoothed/';
+PBT_analysis.make_pbt_run_plots(pbt_run_path_12, results_dir_12)
+
+%% plot pbt results for 190627
+pbt_run_path_13 = '/snel/share/share/derived/kastner/LFADS_runs/pulvinar/Multi-day/multiDay_CO_AO_TD_HoldRel_JanToApr/runs/reRun180614_20190627/param_pSXbYQ/all/pbt_run/';
+results_dir_13 = '/snel/share/share/derived/kastner/LFADS_runs/pulvinar/Multi-day/multiDay_CO_AO_TD_HoldRel_JanToApr/runs/reRun180614_20190627/param_pSXbYQ/all/tmp_smoothed/';
+PBT_analysis.make_pbt_run_plots(pbt_run_path_13, results_dir_13)
+

@@ -4,7 +4,7 @@ addpath('/snel/home/fzhu23/bin/analysis_tools')
 addpath('/snel/home/fzhu23/Projects/Pulvinar/codes')
 addpath('/snel/home/fzhu23/Projects/Pulvinar/myTools')
 
-%%
+%% set up day information
 datasets(1).shortName = '0208';
 datasets(1).longName = '02082019';
 datasets(2).shortName = '0218';
@@ -17,25 +17,26 @@ datasets(5).shortName = '0308';
 datasets(5).longName = '03082019';
 datasets(6).shortName = '0310';
 datasets(6).longName = '03102019';
-grawDataRoot = '/snel/share/share/data/kastner/Manoj/PUL/';
+datasets(7).shortName = '0311';
+datasets(7).longName = '03112019';
 
-for day = 1:numel(datasets)
-%for day = 3
+%%
+% assign rawDataRoot
+rawDataRoot = '/snel/share/share/data/kastner/Manoj/PUL/spikeSorted';
+
+%for day = 1:numel(datasets)
+for day = 2
 
     %% construct the data path for loading
-    %rawDataPath = '/snel/share/share/data/kastner/Manoj/PUL/Remy_0208_PUL/';
-    %rawDataPath = '/snel/share/share/data/kastner/Manoj/PUL/Remy_0310_PUL/';
     folderName = ['Remy_' datasets(day).shortName '_PUL'];
     fileName = ['Remy_' datasets(day).longName '_PUL_MUA.mat'];
-
-    %dayFileName = 'Remy_02082019_PUL_MUA.mat';
-    %dayFileName = 'Remy_03102019_PUL_MUA.mat';
     fullFileName = fullfile(rawDataRoot, folderName, fileName);
 
     %% load the data
     S = load(fullFileName);
-    
+
     %% combine units on the same channel
+    % get rid of other channels that are not spiking channels
     allFieldNames = fieldnames(S);
     unit_names = {};
     j = 1;
@@ -46,8 +47,6 @@ for day = 1:numel(datasets)
         end
     end
 
-    %%        
-    % unit_names = unit_names(2:end-2);
     concat_allUnits = [];
     allChannels_spks = {};
     sortOrNot = 0;
@@ -85,9 +84,8 @@ for day = 1:numel(datasets)
         curr_unit = next_unit;
     end
 
-    %% get rid of channels 1 - 4
-
-    allChannels_spks = allChannels_spks(5:end);
+    % get rid of channels 1 - 4
+    allChannels_spks = allChannels_spks(3:end);
 
     %% convert spikeTimes into 1s and 0s
     rawSampleRate = 1000;
@@ -335,70 +333,4 @@ for day = 1:numel(datasets)
     %saveName = '020819_v1.mat';
     save(saveName, 'combinedData');
 
-end
-
-
-%% verify external inputs    
-trial_selected = [30, 66];
-cmap = lines();
-legend_cell = {'fix square', 'endo - TL', 'endo - BL', 'endo - TR', 'endo - BR', 'bar - vert', 'bar - hori', 'exo - TL', 'exo - BL', 'exo - TR', 'exo - BR', 'target - TL', 'target - BL', 'target - TR', 'target - BR'};
-cue_cell = {'TL', 'BL', 'TR', 'BR'};
-for i = 1:length(trial_selected)
-    itrial = trial_selected(i);
-    ei = r.r(itrial).externalInputs;
-    x_bar = UE.barOn(itrial) - UE.fixOn(itrial);
-    x_cue = UE.cueOn(itrial) - UE.fixOn(itrial);
-    x_cueEnd = UE.cueEnd(itrial) - UE.fixOn(itrial);
-    x_target = UE.targetOn(itrial) - UE.fixOn(itrial);
-    x_targetEnd = UE.targetEnd(itrial) - UE.fixOn(itrial);
-    x_trialEnd = UE.trialEnd(itrial) - UE.fixOn(itrial);
-    nSubPlot = 15;
-    f1 = figure;
-    for j = 1:15
-        subplot(15, 1, j);
-        plot(ei(j,:), 'Color', cmap(j, :), 'DisplayName', legend_cell{j});
-        if j == 15
-            if x_targetEnd == x_trialEnd
-                set(gca,'XTick',[0, x_bar, x_cue, x_cueEnd x_target x_trialEnd]);
-                set(gca,'XTickLabels',{'fix', 'barOn', 'cueOn', '+150ms','targetOn', 'release'});
-            else
-                set(gca,'XTick',[0, x_bar, x_cue, x_cueEnd x_target x_targetEnd x_trialEnd]);
-                set(gca,'XTickLabels',{'fix', 'barOn', 'cueOn', '+150ms','targetOn', '+150ms', 'release'});
-            end
-            set(gca, 'FontSize', 7);
-        end
-        ylim([-1 1]);
-        legend('show')
-    end
-
-    % get title
-    if UE.fixType(itrial) == 1
-        exoOrEndo = 'Exo - ';
-    else
-        exoOrEndo = 'Endo - ';
-    end
-    if UE.barType(itrial) == 1
-        vertOrHori = 'Vert Bars - ';
-    else
-        vertOrHori = 'Hori Bars - ';
-    end
-    cuedLocation = [cue_cell{DataPreprocessing.Manoj_getTargetPos(UE.cueType(itrial))}, ' - '];
-    if UE.isValidTarget(itrial)
-        targetLocation = 'Valid target';
-    elseif UE.isSameObjTarget(itrial)
-        targetLocation = 'Same obj target';
-    elseif UE.isDiffObjTarget(itrial)
-        targetLocation = 'Diff obj target';
-    end
-    suptitle([exoOrEndo, vertOrHori, cuedLocation, targetLocation]);
-   
-    % save figure
-    set(f1, 'Position', [4 4 1897 962]);
-    savefigDir = '/snel/share/share/derived/kastner/data_processed/ManojData/singleArea/pulvinar/multi-unit/continuous/withExternalInput_withLag/singleDay/testDay_020819/examples_externalInputs';
-    if ~isdir(savefigDir)
-        mkdir(savefigDir);
-    end    
-    cd(savefigDir);
-    print(f1,['Trial ' int2str(itrial)], '-dpng');
-    close;
 end
