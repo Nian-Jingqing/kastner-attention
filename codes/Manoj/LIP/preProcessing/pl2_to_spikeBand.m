@@ -1,6 +1,6 @@
 %%
 baseDir = '/mnt/scratch/feng/LIP';
-outDir = '/snel/share/share/data/kastner/Manoj/LIP/spikeBand/';
+outDir = '/snel/share/share/data/kastner/Manoj/LIP/spikeBand/notchFilt_bandPass/';
 dataset(1).date = '02182019';
 dataset(2).date = '03062019';
 dataset(3).date = '03112019';
@@ -10,14 +10,14 @@ dataset(6).date = '04062019';
 dataset(7).date = '04252019';
 dataset(8).date = '05022019';
 
-for i = 6:8
+for i = 1
     filename = ['Remy_RP_' dataset(i).date '_LIP_WB.pl2'];
     filedir = fullfile(baseDir, filename);
     outfilename = ['Remy_' dataset(i).date '_LIP_spikeband.mat'];
-    outfiledir = fullfile(baseDir, outfilename);
+    outfiledir = fullfile(outDir, outfilename);
 
     tic;
-    broadband2streamMinMax( filedir, outfiledir )
+    broadband2streamMinMax( filedir, outfiledir, [300, 5000] )
     toc;
 
 end

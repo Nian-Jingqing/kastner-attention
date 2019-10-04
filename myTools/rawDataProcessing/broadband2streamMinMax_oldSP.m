@@ -1,18 +1,18 @@
-function spikeband = broadband2streamMinMax(inputfile, outputfile, cutOffFreqs,...
-                                            options)
-    % BROADBAND2STREAMMINMAX
-    % 
-    % spikeband = broadband2streamMinMax(filePrefix, blockId, outPrefix,options)
+function spikeband = broadband2streamMinMax_oldSP(inputfile, outputfile, ...
+                                              options)
+% BROADBAND2STREAMMINMAX
+%
+% spikeband = broadband2streamMinMax(filePrefix, blockId, outPrefix,options)
 
-    %
-    % outputs to a structure comparable to the continuous stream data structure
-    % output format:
-    %    
-    %    spikeband.clock [1 x T]         :   clock times
-    %    spikeband.minSpikeBand [96 x T] :   ms-binned min spikeband values for each channel
-    %    spikeband.minSpikeInd [96 x T]  :   index of above
-    %    spikeband.meanSquared           :   outputs MS value for a single channel, channel ID rotates ever 100 ms
-    %    spikeband.meanSquaredChannel    :   channel index of above
+%
+% outputs to a structure comparable to the continuous stream data structure
+% output format:
+%
+%    spikeband.clock [1 x T]         :   clock times
+%    spikeband.minSpikeBand [96 x T] :   ms-binned min spikeband values for each channel
+%    spikeband.minSpikeInd [96 x T]  :   index of above
+%    spikeband.meanSquared           :   outputs MS value for a single channel, channel ID rotates ever 100 ms
+%    spikeband.meanSquaredChannel    :   channel index of above
 
 
 if ~exist('options','var')
@@ -76,12 +76,12 @@ if ( Version > 102 )
     else
         disp('Data type : Unknown');
     end
-        
+
     disp(['Spike Peak Voltage (mV) : ' num2str(SpikePeakV)]);
     disp(['Spike A/D Resolution (bits) : ' num2str(SpikeADResBits)]);
     disp(['Slow A/D Peak Voltage (mV) : ' num2str(SlowPeakV)]);
     disp(['Slow A/D Resolution (bits) : ' num2str(SlowADResBits)]);
-end   
+end
 
 % there's some other info available. I don't really know what it means.
 tmp = PL2GetFileIndex( inputfile );
@@ -147,7 +147,7 @@ elseif isfield( options, 'startTime' )
     startIndex = floor( options.startTime * Freq ) + 1;
 end
 if isfield( options, 'endIndex' )
-    endIndex = options.endIndex;    
+    endIndex = options.endIndex;
 elseif isfield( options, 'endTime' )
     endIndex = floor( options.endTime * Freq ) + 1;
 end
@@ -179,38 +179,6 @@ while currentBufferStartInd < endIndex
 
     [ dataBuffer, samplesRead ] = readPL2Samples( inputfile, SAMPLES_IN_BUFFER, analogChannels, numFramesProcessed == 0 );
 
-    % notch out noisy frequencies
-    dataBuffer_normd = normalize(dataBuffer, 'centered');
-    Fs = 40000;
-    if sum(isnan(dataBuffer_normd(:))) == 0  % handle the last dataBuffer in the file, which has NaNs. Can't use pwelch to find peaks in this case.
-        Pxx_normd = [];
-        for nn = 1:size(dataBuffer_normd, 1)
-            [ Pxx_normd(:,nn), w ] = pwelch( dataBuffer_normd( nn, : ), 40000*4 );
-        end
-
-        x = w * Fs/(2*pi);
-        locs = {};
-        pks = {};
-        for nn = 1:size(dataBuffer_normd, 1)
-            [pks_tmp, locs_tmp] = findpeaks(10 * log10(Pxx_normd(:, nn)'), x,  'MinPeakProminence', 5 );
-            pksInBand = find(locs_tmp <= 5000 & locs_tmp >= 300);
-            locs{nn} = locs_tmp(pksInBand);
-            pks{nn} = pks_tmp(pksInBand);
-        end
-    end
-    dataFiltered = dataBuffer_normd;
-    parfor nn = 1:size(dataBuffer_normd, 1)
-        for pk = 1:numel(locs{nn})
-            freqToNotch = locs{nn}(pk); 
-            W0 = freqToNotch/(Fs/2); BW = 2/(Fs/2); %BW = W0/35;
-            [b,a] = iirnotch(W0, BW);
-            dataFiltered(nn, :) = filter(b,a,dataFiltered(nn,:));
-            %disp(['finished ' int2str(pk)])
-        end
-    end
-
-    dataBuffer = dataFiltered;
-
     % disp( sprintf( 'read %g / %g samples', samplesRead, SAMPLES_IN_BUFFER ) );
 
     currentBufferEndInd = currentBufferStartInd + samplesRead - 1;
@@ -239,19 +207,11 @@ while currentBufferStartInd < endIndex
 
     % now do the actual spikeband filtering!
     if ~isempty(filt)
-
-        % FZ commented the follow if else statement on 190905
-        %if useFiltfilt
-        %    spikeBandData = filtfilthd( filt, dataForFilter );
-        %else
-        %    spikeBandData = filt.filter( dataForFilter );
-        %end
-
-        % FZ added the following on 190905
-        filtLowCutoff = cutOffFreqs(1);
-        filtHighCutoff = cutOffFreqs(2);
-        [b,a] = butter(4, [filtLowCutoff filtHighCutoff] / (Fs / 2), 'bandpass');
-        spikeBandData = filtfilt(b, a, double(dataForFilter));
+        if useFiltfilt
+            spikeBandData = filtfilthd( filt, dataForFilter );
+        else
+            spikeBandData = filt.filter( dataForFilter );
+        end
     else
         spikeBandData = dataForFilter;
     end
@@ -276,7 +236,7 @@ while currentBufferStartInd < endIndex
 
     indsToStore = sampleMsInds( keepInds );
     spikeband.clock( indsToStore ) = sampleInds( keepInds );
-    
+
     % preallocate mins, max, moving avh
     mins = zeros( floor( size( validData )./ [ SAMPLES_PER_MS 1 ]),...
                   'single');
@@ -297,11 +257,11 @@ while currentBufferStartInd < endIndex
         minInd(:,nc) = uint8(channelMinInds);
         % get the mean-squared values
         localMs = mean(cbroadband.^2);
-        
+
         latestMs = [prevMsVals(:,nc)' localMs];
         % take simple moving avg of prev ms points and current
         channelMovAvgMS=tsmovavg( latestMs, 's', MOV_AVG_BUFFER_SIZE );
-        
+
         movAvgMs(:,nc) = channelMovAvgMS( MOV_AVG_BUFFER_SIZE + 1 : end );
         prevMsVals(:,nc) = localMs( end - MOV_AVG_BUFFER_SIZE + 1 : end );
 
@@ -321,8 +281,8 @@ while currentBufferStartInd < endIndex
     end
     spikeband.meanSquared( indsToStore ) = meanSquared( keepInds );
     spikeband.meanSquaredChannel( indsToStore ) = meanSquaredChannel( keepInds );
-    
-    
+
+
     % where should next buffer start
     currentBufferStartInd = currentBufferEndInd + 1;
     numFramesProcessed = numFramesProcessed + 1;

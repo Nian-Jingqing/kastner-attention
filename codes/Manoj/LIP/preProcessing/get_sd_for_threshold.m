@@ -30,19 +30,22 @@ for itrial = 1:numel(startInds)
 end
 
 %%
-spikeBandFile = '/snel/share/share/data/kastner/Manoj/LIP/spikeBand/Remy_02182019_LIP_spikeband.mat';
+%spikeBandFile = '/snel/share/share/data/kastner/Manoj/LIP/spikeBand/Remy_02182019_LIP_spikeband.mat';
+spikeBandFile = '/snel/share/share/data/kastner/Manoj/LIP/spikeBand/notchFilt_bandPass/Remy_02182019_LIP_spikeband.mat';
 bb = load(spikeBandFile);
 bb = bb.spikeband;
 % remove common average
-bb.minSpikeBand_rmCA = bb.minSpikeBand - mean(bb.minSpikeBand,2);
+%bb.minSpikeBand_rmCA = bb.minSpikeBand - mean(bb.minSpikeBand,2);
 
 %% get var and remove NaN, also remove NaN for minSpikeBand
 for ich = 1:size(bb.minSpikeBand,2)
     chVar{ ich } = bb.meanSquared( bb.meanSquaredChannel == ich );
     whereNan = find( isnan( chVar{ ich } ) );
     chVar{ ich } = chVar{ ich }( 1 : (whereNan(1) - 1) );
-    whereNan_msb = find( isnan( bb.minSpikeBand_rmCA( : , ich ) ) );
-    chMsb{ ich } = bb.minSpikeBand_rmCA(1:(whereNan_msb(1) - 1), ich);
+    %    whereNan_msb = find( isnan( bb.minSpikeBand_rmCA( : , ich ) ) );
+    whereNan_msb = find( isnan( bb.minSpikeBand( : , ich ) ) );
+    %chMsb{ ich } = bb.minSpikeBand_rmCA(1:(whereNan_msb(1) - 1), ich);
+    chMsb{ ich } = bb.minSpikeBand(1:(whereNan_msb(1) - 1), ich);
 end
 
 %% compute changing std
@@ -69,7 +72,7 @@ for ich = 1:numel( chVar )
 end
 
 %% remove common average
-bb.minSpikeBand_rmCA = bb.minSpikeBand - mean(bb.minSpikeBand,2);
+%bb.minSpikeBand_rmCA = bb.minSpikeBand - mean(bb.minSpikeBand,2);
 
 %% start iteration on the # of sd to get spikes
 sd_factors = [1.25, 1.5, 1.75, 2, 2.25];
@@ -98,7 +101,7 @@ for i = 1:numel(sd_factors)
     r = Datasets.PulvinarTools.pulvinarData( C.makeTrialsFromData( startInds, stopInds, trialstruct ) );
     tc_r = R.Rstruct(r.r);
     %
-    sigma = 50;
+    sigma = 20;
     binsize_rescaled = 10;
     %
     tc_r.smoothFieldInR('spikes', 'spike_smoothed', sigma, 1);
@@ -147,8 +150,8 @@ end
 
 %% find top 5 channels that have highest FR
 [~, sidx] = sort(mean(PSTH(3).barOn.Vert.tc.psth, 2), 'descend');
-%nn = [1:5, 8:4:32];
-nn = [25:32]
+nn = [1:5, 8:4:32];
+%nn = [25:32]
 N = sidx(nn)'; % neuron
 %N = sidx(1:10)'; % neuron
 pre_post_times = [400, 400] / binsize_rescaled;
@@ -156,7 +159,7 @@ t = pre_post_times;
 t = [-t(1):-1 0:t(2)] * binsize_rescaled; %t(end)=[];
 
 %%
-savePSTHdir = '/snel/share/share/derived/kastner/data_processed/ManojData/singleArea/LIP/PSTHs/selecting_threshold/02182019/tmp_comAve_rm_2'
+savePSTHdir = '/snel/share/share/derived/kastner/data_processed/ManojData/singleArea/LIP/PSTHs/selecting_threshold/02182019/tmp_noCAR_Notch_BP/'
 if ~isdir(savePSTHdir)
     mkdir(savePSTHdir)
 end

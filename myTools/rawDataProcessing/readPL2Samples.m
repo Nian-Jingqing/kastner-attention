@@ -94,4 +94,3 @@ while samplesRead < samplesToRead
         samplesRead = samplesRead + blockInfo.AnalogData.NumSamples;
     end
 end
-
