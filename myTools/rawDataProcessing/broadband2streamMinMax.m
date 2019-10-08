@@ -159,6 +159,7 @@ spikeband.minSpikeBand = zeros( numMs, numChannels, 'single' );
 spikeband.minSpikeBandInd = zeros( numMs, numChannels, 'uint8' );
 spikeband.meanSquared = zeros( numMs, 1, 'single' );
 spikeband.meanSquaredChannel = zeros( numMs, 1, 'uint16' );
+spikeband.validSpikeBand = zeros( numMs*SAMPLES_PER_MS, numChannels, 'single' ); % FZ, for storing valid data
 
 % initialize some variables for our big for loop
 currentBufferStartInd = 1;
@@ -268,13 +269,17 @@ while currentBufferStartInd < endIndex
     validDataEndInd = currentBufferEndInd - EDGE_EFFECT_BUFFER;
     % get the index of each ms-sample in terms of data sample indices
     sampleInds = validDataStartInd : SAMPLES_PER_MS : validDataEndInd;
+    sampleInds_1 = validDataStartInd : 1 : validDataEndInd; % FZ for getting valid data
     keepInds = find( sampleInds > 0 ) : ...
         find( sampleInds <= endIndex, 1, 'last' );
+    keepInds_1 = find( sampleInds_1 > 0 ) : ...
+        find( sampleInds_1 <= endIndex, 1, 'last' ); % FZ for getting valid data
 
     % get the index of each ms-sample, but in ms
     sampleMsInds = ( (sampleInds-1) / SAMPLES_PER_MS ) + 1;
 
     indsToStore = sampleMsInds( keepInds );
+    indsToStore_1 = sampleInds_1( keepInds_1 ); % FZ for getting valid data
     spikeband.clock( indsToStore ) = sampleInds( keepInds );
     
     % preallocate mins, max, moving avh
@@ -310,6 +315,7 @@ while currentBufferStartInd < endIndex
     % store the ms-level representations
     spikeband.minSpikeBand( indsToStore, : ) = mins( keepInds, : );
     spikeband.minSpikeBandInd( indsToStore, : ) = minInd( keepInds, : );
+    spikeband.validSpikeBand( indsToStore_1, : ) = validData( keepInds_1, : );
 
     % store channel mean squared for only one channel at a time
     for i = 1:numel( keepInds )
@@ -330,4 +336,5 @@ while currentBufferStartInd < endIndex
 end
 
 %save
-save(outputfile,'spikeband');
+save(outputfile,'spikeband', '-v7.3');
+return 
