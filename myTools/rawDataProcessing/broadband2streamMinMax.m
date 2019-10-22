@@ -159,7 +159,8 @@ spikeband.minSpikeBand = zeros( numMs, numChannels, 'single' );
 spikeband.minSpikeBandInd = zeros( numMs, numChannels, 'uint8' );
 spikeband.meanSquared = zeros( numMs, 1, 'single' );
 spikeband.meanSquaredChannel = zeros( numMs, 1, 'uint16' );
-spikeband.validSpikeBand = zeros( numMs*SAMPLES_PER_MS, numChannels, 'single' ); % FZ, for storing valid data
+%spikeband.validSpikeBand = zeros( numMs*SAMPLES_PER_MS, numChannels, 'single' ); % FZ, for storing valid data
+spikeband.validSpikeBand = sparse( numMs*SAMPLES_PER_MS, numChannels ); % FZ, for dealing with OUT OF MEMORY error using zeros
 
 % initialize some variables for our big for loop
 currentBufferStartInd = 1;
@@ -178,7 +179,8 @@ while currentBufferStartInd < endIndex
                    numFramesProcessed, ...
                    currentBufferStartInd / endIndex * 100, lastBlockTime ) );
 
-    [ dataBuffer, samplesRead ] = readPL2Samples( inputfile, SAMPLES_IN_BUFFER, analogChannels, numFramesProcessed == 0 );
+    %[ dataBuffer, samplesRead ] = readPL2Samples( inputfile, SAMPLES_IN_BUFFER, analogChannels, numFramesProcessed == 0 );
+    [ dataBuffer, samplesRead ] = readPL2Samples( inputfile, SAMPLES_IN_BUFFER, analogChannels - 128, numFramesProcessed == 0 ); % hard code to solve weird thing with wrong channel number
 
     % notch out noisy frequencies
     dataBuffer_normd = normalize(dataBuffer, 'centered');
@@ -201,15 +203,30 @@ while currentBufferStartInd < endIndex
     end
     dataFiltered = dataBuffer_normd;
     parfor nn = 1:size(dataBuffer_normd, 1)
+
+        % % dummy filter
+        %hcas = dfilt.df1( 1, 1);
         for pk = 1:numel(locs{nn})
             freqToNotch = locs{nn}(pk); 
             W0 = freqToNotch/(Fs/2); BW = 2/(Fs/2); %BW = W0/35;
             [b,a] = iirnotch(W0, BW);
+
+            % cascade filters
+            %hnew = dfilt.df1( b, a);
+            %hcas = dfilt.cascade( hcas, hnew );
+
+            % old filtering code
             dataFiltered(nn, :) = filter(b,a,dataFiltered(nn,:));
-            %disp(['finished ' int2str(pk)])
         end
+
+        % % cascade filters
+        %dataFiltered(nn, :) = hcas.filter( dataFiltered(nn,:) );
+        
+            %disp(['finished ' int2str(pk)])
     end
 
+
+    %    keyboard
     dataBuffer = dataFiltered;
 
     % disp( sprintf( 'read %g / %g samples', samplesRead, SAMPLES_IN_BUFFER ) );
@@ -337,4 +354,5 @@ end
 
 %save
 save(outputfile,'spikeband', '-v7.3');
-return 
+%return 
+clear all

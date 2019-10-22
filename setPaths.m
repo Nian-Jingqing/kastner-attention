@@ -21,6 +21,7 @@ addpath( fullfile( pulvinarBase, '/codes/broadbandProcessing') )
 addpath( fullfile( pulvinarBase, '/codes/postAnalysisCodes') )
 addpath( fullfile( pulvinarBase, '/codes/Manoj') )
 addpath( fullfile( pulvinarBase, '/codes/Manoj/LIP/postAnalysis') )
+addpath( fullfile( pulvinarBase, '/codes/Manoj/LIP/preProcessing') )
 % jpca paths
 addpath( fullfile( pulvinarBase, '/myTools/jPCA_tools') )
 addpath( fullfile( pulvinarBase, '/myTools/jPCA_tools/fromMarksLibraries') )

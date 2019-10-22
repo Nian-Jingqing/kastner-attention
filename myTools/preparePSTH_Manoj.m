@@ -27,7 +27,7 @@ if strcmp(infield, 'rates')
     avg_rates = squeeze(mean(raster_tensor, 2));
 else
     avg_rates = squeeze(mean(raster_tensor, 2))*(1000/rebinSize);
-    tmp_std = squeeze(std(raster_tensor,0, 2))*(1000/rebinSize);
+    tmp_std = squeeze(std((1000/rebinSize)*raster_tensor,0, 2));
     stderror = tmp_std/sqrt(numel(keepTrials_struct));
     raster_tensor = raster_tensor*(1000/rebinSize);
 end

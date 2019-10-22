@@ -73,3 +73,12 @@ pbt_run_path_13 = '/snel/share/share/derived/kastner/LFADS_runs/pulvinar/Multi-d
 results_dir_13 = '/snel/share/share/derived/kastner/LFADS_runs/pulvinar/Multi-day/multiDay_CO_AO_TD_HoldRel_JanToApr/runs/reRun180614_20190627/param_pSXbYQ/all/tmp_smoothed/';
 PBT_analysis.make_pbt_run_plots(pbt_run_path_13, results_dir_13)
 
+%% plot the PBT result for rossler 
+pbt_run_path_14 = '/snel/share/share/derived/kastner/model_interaction/runs/interactingRossler_200timesteps_191006/downstreamRossler_191006/pbt_run/'
+results_dir_14 = '/snel/share/share/derived/kastner/model_interaction/runs/interactingRossler_200timesteps_191006/downstreamRossler_191006/'
+PBT_analysis.make_pbt_run_plots(pbt_run_path_14, results_dir_14)
+
+%% plot the PBT result for rossler 
+pbt_run_path_15 = '/snel/share/share/derived/kastner/model_interaction/runs/downstreamLorenz_191018/pbt_run/'
+results_dir_15 = '/snel/share/share/derived/kastner/model_interaction/runs/downstreamLorenz_191018/hp_progression/'
+PBT_analysis.make_pbt_run_plots(pbt_run_path_15, results_dir_15)

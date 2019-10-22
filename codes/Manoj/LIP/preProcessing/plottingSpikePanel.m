@@ -1,4 +1,4 @@
-function plottingSpikePanel( bb, fig_title )
+function plottingSpikePanel( bb, fig_title, date )
 
 %% Remove NaN for minSpikeBand
 chVsb{32} = 0;
@@ -21,7 +21,7 @@ vsb_mat = [chVsb{:}];
 %% Call CP's function to grab threshold crossings (NEED TO WORK ON THIS)
 
 % should call the function calcThresholdCrossings. The function takes N x T data, but my data is in cell array. Need to check whether all channels have same length.
-threshMultOrFixed = -4;
+threshMultOrFixed = -5;
 useMultiplier = true;
 tStep = 1/40000;
 windowLength = 40; % default is 30. Changed to 40 to match a 40000-equvalent sampling rate as default
@@ -41,3 +41,12 @@ for ich = 1:32
     axis tight
 end
 suptitle(fig_title)
+set(gcf, 'Position', [4 4 1914 1082])
+
+savedir = '/snel/share/share/derived/kastner/data_processed/ManojData/singleArea/LIP/notch_filtering/notchFilterPlusBandPass/';
+if ~isdir(savedir)
+    mkdir(savedir);
+end
+cd(savedir)
+saveFileName = ['Spiking_panel_', date];
+print(gcf, saveFileName, '-dpng');

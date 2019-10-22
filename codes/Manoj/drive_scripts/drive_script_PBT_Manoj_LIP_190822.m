@@ -5,19 +5,19 @@ addpath('/snel/home/fzhu23/bin/analysis_tools')
 addpath('/snel/home/fzhu23/Projects/Pulvinar/codes')
 addpath('/snel/home/fzhu23/Projects/Pulvinar/myTools')
 %% Locate and specify the datasets
-datasetPath = '/snel/share/share/derived/kastner/data_processed/ManojData/singleArea/LIP/thresholdCrossings/data_masked_highCorr_rm/higherThreshold/';
+datasetPath = '/snel/share/share/derived/kastner/data_processed/ManojData/singleArea/LIP/thresholdCrossings/data_masked_highCorr_rm/preAlignedData_added/selected/';
 dc = Pulvinar.DatasetCollection(datasetPath);
 dc.name = 'multi-Days';
 
 % add individual datasets
 % add individual datasets
-Pulvinar.Dataset(dc, '0218_v3.mat');
-Pulvinar.Dataset(dc, '0306_v3.mat');
-Pulvinar.Dataset(dc, '0311_v3.mat');
-Pulvinar.Dataset(dc, '0314_v3.mat');
-Pulvinar.Dataset(dc, '0406_v3.mat');
-Pulvinar.Dataset(dc, '0425_v3.mat');
-Pulvinar.Dataset(dc, '0502_v3.mat');
+Pulvinar.Dataset(dc, '021819_v3.mat');
+Pulvinar.Dataset(dc, '030619_v3.mat');
+Pulvinar.Dataset(dc, '031119_v3.mat');
+Pulvinar.Dataset(dc, '031419_v3.mat');
+Pulvinar.Dataset(dc, '040619_v3.mat');
+Pulvinar.Dataset(dc, '042519_v3.mat');
+Pulvinar.Dataset(dc, '050219_v3.mat');
 
 
 % Pulvinar.Dataset(dc, '170407_cueOnArrayOnTargetDim_HoldRel.mat');
