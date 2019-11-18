@@ -1,4 +1,4 @@
-function plottingPSTHPanel(bb, date)
+function plottingPSTHPanel(bb, date, multiple)
 UE_baseDir = '/snel/share/share/derived/kastner/data_processed/ManojData/singleArea/LIP/UEs/';
 UE_file = ['UE_' date '.mat'];
 load_UE_path = fullfile(UE_baseDir, UE_file);
@@ -40,7 +40,7 @@ for iseg = 1:num_segs
     iseg
 end
 
-thresh = -5 * (thresh / num_segs);
+thresh = (-1) * multiple * (thresh / num_segs);
 
 %% get var and remove NaN, also remove NaN for minSpikeBand
 for ich = 1:size(bb.minSpikeBand,2)
@@ -123,7 +123,7 @@ for nBar = 1:numel(conditions.barOn)
 end
 
 %% plotting PSTHs
-savedir = '/snel/share/share/derived/kastner/data_processed/ManojData/singleArea/LIP/notch_filtering/notchFilterPlusBandPass/';
+savedir = '/snel/share/share/derived/kastner/data_processed/ManojData/singleArea/LIP/notch_filtering/notchFilterPlusBandPass/moreNewSessions/';
 if ~isdir(savedir)
     mkdir(savedir);
 end
@@ -198,7 +198,8 @@ suptitle('Exo-Vertical Bars')
 set(gcf, 'Position', [4 4 1914 1082]);
 %tightfig(gcf)
 cd(savedir);
-saveFileName = ['PSTH_panel_', 'Exo_Vert_', date];
+a = sprintf('%.2f', multiple);
+saveFileName = [date, '_', a, 'std_PSTH_panel_', 'Exo_Vert'];
 print(gcf, saveFileName, '-dpng');
 
 %%
@@ -264,5 +265,8 @@ set(gcf, 'Position', [4 4 1914 1082]);
 tightfig(gcf)
 suptitle('Exo-Horizontal Bars')
 cd(savedir);
-saveFileName = ['PSTH_panel_', 'Exo_Hori_', date];
+a = sprintf('%.2f', multiple);
+saveFileName = [date, '_', a, 'std_PSTH_panel_', 'Exo_Hori'];
+%saveFileName = ['PSTH_panel_', 'Exo_Hori_', date];
 print(gcf, saveFileName, '-dpng');
+clear all

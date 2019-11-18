@@ -22,7 +22,7 @@ loadChoppedCombined_twoLocations
 
 
 %% make a place to store output videos
-outdir = '/snel/share/share/derived/kastner/LFADS_runs/pulvinar/Multi-day/multiDay_CO_AO_TD_HoldRel_JanToApr/postAnalysis/reRun180614_20190605/jPCA_lowD_traj/progression/preCue/tmp/';
+outdir = '/snel/share/share/derived/kastner/LFADS_runs/pulvinar/Multi-day/multiDay_CO_AO_TD_HoldRel_JanToApr/postAnalysis/reRun180614_20190618/jPCA_lowD_traj/tmp/';
 if ~isdir( outdir )
     mkdir( outdir );
 end
@@ -75,14 +75,14 @@ window = round( [-300  0] / binsize_rescaled );
 %window = round( [-200 1000] / binsize_rescaled );
 
  %window_raw = [-200 1200];
-whichfieldDimred = 'cueOnset';
-%whichfieldDimred = 'arrayDim';
+ %whichfieldDimred = 'cueOnset';
+whichfieldDimred = 'arrayDim';
 %whichfieldDimred = 'arrayOnset';
 
 %window_lfp = round( [-296 32] / binsize_rescaled );
 
-whichfieldJPCA = 'cueOnset';
-window_jPCA = round( [-300  200] / binsize_rescaled );
+whichfieldJPCA = 'arrayDim';
+window_jPCA = round( [-600  200] / binsize_rescaled );
 
 
 %whichfieldPlot = 'arrayDim';
@@ -90,12 +90,12 @@ window_jPCA = round( [-300  200] / binsize_rescaled );
 
 
 
-whichfieldPlot = 'cueOnset';
-newWindow = round( [-300  0] / binsize_rescaled );
-
-
 %whichfieldPlot = 'cueOnset';
-%newWindow = round( [-200  1200] / binsize_rescaled );
+%newWindow = round( [-300  0] / binsize_rescaled );
+
+
+whichfieldPlot = 'arrayOnset';
+newWindow = round( [-200  1200] / binsize_rescaled );
 
 
 %% dimred based on all days
@@ -163,13 +163,14 @@ end
 
 %% if do jPCA without doing PCA at all
 clear dataForJPCA
-dataForJPCA(totalTrialsToKeep).A = 0;
+%dataForJPCA(totalTrialsToKeep).A = 0;
+dataForJPCA(59).A = 0;
 FRandSpiking = [];
 ind = 1;
 RT = zeros(1, totalTrialsToKeep);
 DL = zeros(1, totalTrialsToKeep);
-for nday = 1:numel( alf )
-%for nday = [5]
+%for nday = 1:numel( alf )
+for nday = [1]
     trialsToKeepInds{ nday } = find( trialsToKeep{ nday } );
     for itr = 1:numel( trialsToKeepInds{ nday } )
         ntr = trialsToKeepInds{ nday }( itr );
@@ -199,7 +200,7 @@ jPCA_params.softenNorm = 5;
 jPCA_params.suppressBWrosettes = true;
 jPCA_params.suppressHistograms = true;
 %%
-times = -200:8:0;
+times = -296:8:32;
 jPCA_params.numPCs = 8;
 [Projection, Summary] = jPCA(dataForJPCA, times, jPCA_params);
 

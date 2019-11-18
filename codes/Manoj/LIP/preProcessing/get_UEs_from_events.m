@@ -1,20 +1,52 @@
 %% setup dates
 
-dataset(1).date = '02182019';
-dataset(2).date = '03062019';
-dataset(3).date = '03112019';
-dataset(4).date = '03142019';
-dataset(5).date = '03272019';
-dataset(6).date = '04062019';
-dataset(7).date = '04252019';
-dataset(8).date = '05022019';
+%dataset(1).date = '02082019';
+%dataset(2).date = '02132019';
+%dataset(3).date = '02142019';
+%dataset(4).date = '02152019';
+%dataset(5).date = '02162019';
+%dataset(6).date = '02262019';
+%dataset(7).date = '02282019';
+%dataset(8).date = '03012019';
+%dataset(9).date = '03022019';
+%dataset(10).date = '03032019';
+
+%dataset(1).date = '02182019';
+%dataset(2).date = '03062019';
+%dataset(3).date = '03112019';
+%dataset(4).date = '03142019';
+%dataset(5).date = '03272019';
+%dataset(6).date = '04062019';
+%dataset(7).date = '04252019';
+%dataset(8).date = '05022019';
+
+%dataset(1).date = '02272019';
+%dataset(2).date = '03042019';
+%dataset(3).date = '03072019';
+%dataset(4).date = '03092019';
+%dataset(5).date = '03102019';
+%dataset(6).date = '03122019';
+%dataset(7).date = '03132019';
+%dataset(8).date = '03152019';
+
+dataset(1).date = '03162019';
+dataset(2).date = '03182019';
+dataset(3).date = '03292019';
+dataset(4).date = '03312019';
+dataset(5).date = '04012019';
+dataset(6).date = '04032019';
+dataset(7).date = '04052019';
+dataset(8).date = '04242019';
+dataset(9).date = '04262019';
+dataset(10).date = '04292019';
 
 %%
 eventMatPath = '/snel/share/share/data/kastner/Manoj/LIP/eventMat/';
 rawSampleRate = 1000;
 savedir = '/snel/share/share/derived/kastner/data_processed/ManojData/singleArea/LIP/UEs/';
 
-for day = 1:8
+for day = 1:10
+    tic;
     clear UE
     dayEventFileName = ['eventmat_' dataset(day).date '.mat'];
     fullEventFileName = fullfile(eventMatPath, dayEventFileName);
@@ -131,4 +163,5 @@ for day = 1:8
     saveFileName = ['UE_' dataset(day).date '.mat'];
     cd(savedir)
     save(saveFileName, 'UE');
+    toc;
 end

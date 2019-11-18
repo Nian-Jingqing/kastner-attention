@@ -159,8 +159,8 @@ spikeband.minSpikeBand = zeros( numMs, numChannels, 'single' );
 spikeband.minSpikeBandInd = zeros( numMs, numChannels, 'uint8' );
 spikeband.meanSquared = zeros( numMs, 1, 'single' );
 spikeband.meanSquaredChannel = zeros( numMs, 1, 'uint16' );
-%spikeband.validSpikeBand = zeros( numMs*SAMPLES_PER_MS, numChannels, 'single' ); % FZ, for storing valid data
-spikeband.validSpikeBand = sparse( numMs*SAMPLES_PER_MS, numChannels ); % FZ, for dealing with OUT OF MEMORY error using zeros
+spikeband.validSpikeBand = zeros( numMs*SAMPLES_PER_MS, numChannels, 'single' ); % FZ, for storing valid data
+%spikeband.validSpikeBand = sparse( numMs*SAMPLES_PER_MS, numChannels ); % FZ, for dealing with OUT OF MEMORY error using zeros
 
 % initialize some variables for our big for loop
 currentBufferStartInd = 1;
@@ -170,7 +170,8 @@ lastBlockTime = 0;
 
 % this is the buffer for filtering
 % will be assembled from prior data and current data buffer
-dataForFiltering = zeros( numChannels, SAMPLES_IN_BUFFER + PRIOR_DATA_BUFFER_SAMPLES );
+%dataForFiltering = zeros( numChannels, SAMPLES_IN_BUFFER + PRIOR_DATA_BUFFER_SAMPLES );
+dataForFilter = zeros( SAMPLES_IN_BUFFER + PRIOR_DATA_BUFFER_SAMPLES, numChannels ); %fixed by FZ on 20191030
 
 %% now process the data in an (awful, for now) loop
 while currentBufferStartInd < endIndex
@@ -179,11 +180,18 @@ while currentBufferStartInd < endIndex
                    numFramesProcessed, ...
                    currentBufferStartInd / endIndex * 100, lastBlockTime ) );
 
-    %[ dataBuffer, samplesRead ] = readPL2Samples( inputfile, SAMPLES_IN_BUFFER, analogChannels, numFramesProcessed == 0 );
-    [ dataBuffer, samplesRead ] = readPL2Samples( inputfile, SAMPLES_IN_BUFFER, analogChannels - 128, numFramesProcessed == 0 ); % hard code to solve weird thing with wrong channel number
+    [ dataBuffer, samplesRead ] = readPL2Samples( inputfile, SAMPLES_IN_BUFFER, analogChannels, numFramesProcessed == 0 );
+    %[ dataBuffer, samplesRead ] = readPL2Samples( inputfile, SAMPLES_IN_BUFFER, analogChannels - 128, numFramesProcessed == 0 ); % hard code to solve weird thing with wrong channel number
 
     % notch out noisy frequencies
     dataBuffer_normd = normalize(dataBuffer, 'centered');
+
+    % set up a low pass filter to eliminate frequencies above 5000Hz % FZ added on 11/17/2019
+    Fs = 40000;
+    [b,a] = butter(4, [5000] / (Fs / 2), 'low');
+    dataBuffer_normd = filtfilt(b, a, dataBuffer_normd');
+    dataBuffer_normd = dataBuffer_normd';
+    
     Fs = 40000;
     if sum(isnan(dataBuffer_normd(:))) == 0  % handle the last dataBuffer in the file, which has NaNs. Can't use pwelch to find peaks in this case.
         Pxx_normd = [];
@@ -196,9 +204,11 @@ while currentBufferStartInd < endIndex
         pks = {};
         for nn = 1:size(dataBuffer_normd, 1)
             [pks_tmp, locs_tmp] = findpeaks(10 * log10(Pxx_normd(:, nn)'), x,  'MinPeakProminence', 5 );
-            pksInBand = find(locs_tmp <= 5000 & locs_tmp >= 300);
-            locs{nn} = locs_tmp(pksInBand);
-            pks{nn} = pks_tmp(pksInBand);
+            %pksInBand = find(locs_tmp <= 5000 & locs_tmp >= 300); % FZ removed on 11/17/2019
+            %locs{nn} = locs_tmp(pksInBand); % FZ removed on 11/17/2019
+            locs{nn} = locs_tmp; % FZ added on 11/17/2019
+            %pks{nn} = pks_tmp(pksInBand); % FZ removed on 11/17/2019
+            pks{nn} = pks_tmp; % FZ added on 11/17/2019
         end
     end
     dataFiltered = dataBuffer_normd;
@@ -208,7 +218,8 @@ while currentBufferStartInd < endIndex
         %hcas = dfilt.df1( 1, 1);
         for pk = 1:numel(locs{nn})
             freqToNotch = locs{nn}(pk); 
-            W0 = freqToNotch/(Fs/2); BW = 2/(Fs/2); %BW = W0/35;
+            %W0 = freqToNotch/(Fs/2); BW = 2/(Fs/2); %BW = W0/35;
+            W0 = freqToNotch/(Fs/2); BW = 4/(Fs/2); %BW = W0/35; % FZ increased the bandwidth from 2Hz to 4Hz on 11/15/2019
             [b,a] = iirnotch(W0, BW);
 
             % cascade filters
@@ -269,9 +280,10 @@ while currentBufferStartInd < endIndex
         filtLowCutoff = cutOffFreqs(1);
         filtHighCutoff = cutOffFreqs(2);
         [b,a] = butter(4, [filtLowCutoff filtHighCutoff] / (Fs / 2), 'bandpass');
-        spikeBandData = filtfilt(b, a, double(dataForFilter));
+        spikeBandData = single(filtfilt(b, a, double(dataForFilter)));
+        % FZ modified above on 20191030 to solve memory issue
     else
-        spikeBandData = dataForFilter;
+        spikeBandData = single(dataForFilter);
     end
 
     % the beginning and end of this buffer are to be considered invalid

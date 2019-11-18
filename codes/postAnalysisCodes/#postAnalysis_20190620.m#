@@ -16,12 +16,12 @@ buildRuns_20190620
 loadChoppedCombined_twoLocations
 
 %%
-savedirOne = '/snel/share/share/derived/kastner/LFADS_runs/pulvinar/Multi-day/multiDay_CO_AO_TD_HoldRel_JanToApr/postAnalysis/reRun180614_20190620/PSTH/arrayOnset/170308';
+savedirOne = '/snel/share/share/derived/kastner/LFADS_runs/pulvinar/Multi-day/multiDay_CO_AO_TD_HoldRel_JanToApr/postAnalysis/reRun180614_20190620/PSTH/arrayOnset/170311';
 if ~isdir( savedirOne )
     mkdir( savedirOne );
 end
 
-savedirTwo = '/snel/share/share/derived/kastner/LFADS_runs/pulvinar/Multi-day/multiDay_CO_AO_TD_HoldRel_JanToApr/postAnalysis/reRun180614_20190620/PSTH/cueOnset/170308';
+savedirTwo = '/snel/share/share/derived/kastner/LFADS_runs/pulvinar/Multi-day/multiDay_CO_AO_TD_HoldRel_JanToApr/postAnalysis/reRun180614_20190620/PSTH/cueOnset/170311';
 if ~isdir( savedirTwo )
     mkdir( savedirTwo );
 end

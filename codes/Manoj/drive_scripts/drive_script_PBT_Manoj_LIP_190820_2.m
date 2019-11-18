@@ -35,7 +35,7 @@ rc2 = Pulvinar.RunCollection(runRoot, 'tc_PBT_190820_2', dc);
 % replace this with the date this script was authored as YYYYMMDD 
 % This ensures that updates to lfads-run-manager won't invalidate older 
 % runs already on disk and provides for backwards compatibility
-rc2.version = 20190820_2;
+rc2.version = 201908202;
 
 % this script defines the run params
 % Pulvinar.multiDayDefinePulvinarRunParams;

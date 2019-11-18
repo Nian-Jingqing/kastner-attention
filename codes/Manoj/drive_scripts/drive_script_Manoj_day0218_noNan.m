@@ -79,4 +79,12 @@ rc2.addRunSpec(Pulvinar.RunSpec('all', dc, 1:dc.nDatasets));
 
 rc2.prepareForLFADS();
 
-rc2.writePBTShellScript()
+LFADSLITEPATH = '/snel/home/fzhu23/bin/lfadslite/run_lfadslite.py';
+%rc2.writeShellScriptRunQueue('display', 9, 'maxTasksSimultaneously', 4, 'gpuList', [0 1], 'path_run_lfads_py', LFADSLITEPATH);
+rc2.runs(1).writeShellScriptLFADSTrain('display', 9, 'cuda_visible_devices', [0], 'path_run_lfads_py', LFADSLITEPATH);
+
+%% run posterior sampling
+LFADSLITEPATH = '/snel/home/fzhu23/bin/lfadslite/run_lfadslite.py';
+%rc2.writeShellScriptRunQueue('display', 9, 'maxTasksSimultaneously', 4, 'gpuList', [0 1], 'path_run_lfads_py', LFADSLITEPATH);
+rc2.runs(1).writeShellScriptLFADSPosteriorMeanSample('cuda_visible_devices', [0], 'path_run_lfads_py', LFADSLITEPATH);
+%rc2.runs(1).runLFADSPosteriorMeanCommand;

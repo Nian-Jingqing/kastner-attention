@@ -91,7 +91,7 @@ end
 
 %% get real spikes for each day, and smooth / rebin
 smoothOrNot = 1;
-sigma = 20;
+sigma = 5;
 overWriteRealOrNot = 1;
 if overWriteRealOrNot
     for nday = 1: numel( datasets )

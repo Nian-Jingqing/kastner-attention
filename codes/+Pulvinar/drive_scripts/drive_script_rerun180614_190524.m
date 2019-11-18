@@ -75,7 +75,7 @@ par.c_keep_ratio = 1;
 
 % the following params make sure this is a pbt run
 par.doPBT = true;
-par.PBTscript = '/snel/home/fzhu23/Projects/Pulvinar/old_pulvinarRepo/Kastner_Attention/codes/+Pulvinar/drive_scripts/pbt_script_run_manager_190508.py';
+par.PBTscript = '/snel/home/fzhu23/Projects/Pulvinar/old_pulvinarRepo/Kastner_Attention/codes/+Pulvinar/drive_scripts/pbt_script_run_manager_190524.py';
 
 
 rc2.addParams( par );

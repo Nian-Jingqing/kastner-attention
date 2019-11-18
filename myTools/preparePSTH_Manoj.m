@@ -25,6 +25,8 @@ for n = 1:nNeurons
 end
 if strcmp(infield, 'rates')
     avg_rates = squeeze(mean(raster_tensor, 2));
+    tmp_std = squeeze(std(raster_tensor,0, 2));
+    stderror = tmp_std/sqrt(numel(keepTrials_struct));
 else
     avg_rates = squeeze(mean(raster_tensor, 2))*(1000/rebinSize);
     tmp_std = squeeze(std((1000/rebinSize)*raster_tensor,0, 2));

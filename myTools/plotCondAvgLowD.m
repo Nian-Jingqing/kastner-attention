@@ -36,7 +36,9 @@ for icond = conds
     b = 1+rem(b,2);
 end
 %axis(gca, axisLim*axisLimScale(nday))
-set(gca, 'view', [-29.1000, -6.0000]);
+%set(gca, 'view', [-29.1000, -6.0000]);
+%set(gca, 'view', [-102.7000, 50.0000]);
+set(gca, 'view', [-40.7000, -22.8000]);
 legend(h(1:8));
 legend('Location', 'best')
 title(sub_title);

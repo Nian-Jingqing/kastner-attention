@@ -1,6 +1,6 @@
 %%
 loadpath = ['/snel/share/share/derived/kastner/data_processed/pulvinar/' ...
-            'multi-unit/continuousOverlapChop/multiDay_JanToMar/withExternalInput_withLag/180614data_rm_highCorr/170308_cueOnArrayOnTargetDim_HoldRel.mat'];
+            'multi-unit/continuousOverlapChop/multiDay_JanToMar/withExternalInput_withLag/180614data_rm_highCorr/170311_cueOnArrayOnTargetDim_HoldRel.mat'];
 
 olapChopped = load(loadpath);
 olapChopped = olapChopped.combinedData;
@@ -13,7 +13,7 @@ out = olapChopped.r.generate_overlap_chop_lfads_data( trial_time_ms, trial_olap_
 
 %% get LFADS data
 r_id = 1;
-day_id = 5;
+day_id = 6;
 run = rc2.runs(r_id);
 r_lfads = olapChopped.r.get_output_from_lfads(run, day_id, trial_time_ms, trial_olap_ms, 'rates');
 assembled_lfads = R.Rstruct(r_lfads);
@@ -186,10 +186,10 @@ binsize = par.spikeBinMs;
 % nIndices = [3 4 5 7 11 12 15 17 18 23 28 30];
 % % 170211
 %  nIndices = [9 15 18 20 24 28 30 31 32 34 37 38 39 42 43 44 45 46 47 48 52 54 55 58 60 62 63 64];
- nIndices = [9 15 18 20 24 28 30 31 32 34 37 39 43 44 45 46 47 48 52 54 55 58 60 62 64]; % high Corr removed
+%nIndices = [9 15 18 20 24 28 30 31 32 34 37 39 43 44 45 46 47 48 52 54 55 58 60 62 64]; % high Corr removed
 % % 170308
 % nIndices = [2 3 5 8 9 11 13 17 20 22 25 26 32 33 36 38 42 43 50 54 55 56 57 58];
-% nIndices = [2 3 5 8 9 11 13 17 20 22 25 26 32 33 36 38 42 50 54 55 56 57]; % high corr removed
+nIndices = [2 3 5 8 9 11 13 17 20 22 25 26 32 33 36 38 42 50 54 55 56 57]; % high corr removed
 % % 170311
 % nIndices = [4 5 9 12 16 20 24 25 29 30 31 34 35 37 38 40 41 44 49 50 51 52 53 54 56 57 59 61];
 % % 170320

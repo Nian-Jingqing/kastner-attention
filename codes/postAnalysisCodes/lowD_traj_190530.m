@@ -1,5 +1,5 @@
 %% make a place to store output videos
-outdir = '/snel/share/share/derived/kastner/LFADS_runs/pulvinar/Multi-day/multiDay_CO_AO_TD_HoldRel_JanToApr/postAnalysis/reRun180614_20190508/lowD_traj/arrayOnset678/';
+outdir = '/snel/share/share/derived/kastner/LFADS_runs/pulvinar/Multi-day/multiDay_CO_AO_TD_HoldRel_JanToApr/postAnalysis/reRun180614_20190618/lowD_traj/array124/';
 if ~isdir( outdir )
     mkdir( outdir );
 end
@@ -60,24 +60,45 @@ whichfieldDimred = 'arrayDim';
 %newWindow = round( [-900  650] / binsize_rescaled );
 
 
-
 whichfieldPlot = 'arrayOnset';
-newWindow = round( [-200  1100] / binsize_rescaled );
+newWindow = round( [0  1200] / binsize_rescaled );
 
 
 %whichfieldPlot = 'cueOnset';
 %newWindow = round( [0  600] / binsize_rescaled );
 
 
-% only do dimred based on day 6
+
+%% dimred based on all days
+timePoints = window(1):window(2);
+numBins = numel( timePoints );
+numFactors = size( alf{ nday }(1).rates, 1);
+totalTrialsToKeep = sum( cellfun( @sum, trialsToKeep ) );
+allFactors = zeros( numFactors, numBins * totalTrialsToKeep );
+
+%
+ind = 1;
+for nday = 1 : numel( alf)
+    trialsToKeepInds{ nday } = find( trialsToKeep{ nday } );
+    for itr = 1:numel( trialsToKeepInds{ nday } )
+        ntr = trialsToKeepInds{ nday }( itr );
+        allFactors( :, (0:numBins-1) + ind ) = alf{ nday }( ntr ).rates( :, alf{ nday }( ntr ).( whichfieldDimred ) + timePoints );
+        ind = ind + numBins;
+    end
+end 
+
+
+
+
+%% only do dimred based on day 5
 timePoints = window(1):window(2);
 numBins = numel( timePoints);
 numFactors = size( alf{ nday }(1).rates, 1);
-totalTrialsToKeep = sum( cellfun( @sum, trialsToKeep(6) ) );
+totalTrialsToKeep = sum( cellfun( @sum, trialsToKeep(1) ) );
 allFactors = zeros( numFactors, numBins * totalTrialsToKeep );
 
 
-for nday = 6
+for nday = 1
     ind = 1;
     trialsToKeepInds{ nday } = find( trialsToKeep{ nday } );
     for itr = 1:numel( trialsToKeepInds{ nday } )
@@ -87,23 +108,6 @@ for nday = 6
     end
 end
 
-%% dimred based on all days
-numBins = numel( window );
-numFactors = size( alf{ nday }(1).rates, 1);
-totalTrialsToKeep = sum( cellfun( @sum, trialsToKeep ) );
-allFactors = zeros( numFactors, numBins * totalTrialsToKeep );
-
-%
-
-for nday = 1 : numel( alf)
-    ind = 1;
-    trialsToKeepInds{ nday } = find( trialsToKeep{ nday } );
-    for itr = 1:numel( trialsToKeepInds{ nday } )
-        ntr = trialsToKeepInds{ nday }( itr );
-        allFactors( :, (0:numBins-1) + ind ) = alf{ nday }( ntr ).rates( :, alf{ nday }( ntr ).( whichfieldDimred ) + window );
-        ind = ind + numBins;
-    end
-end 
 
 %% do pca
 meanFactors = mean( allFactors' );
@@ -127,8 +131,8 @@ p2p = [1 2 3];
 
 
 
-% p2p = [7 8 9];
-p2p = [6 7 8];
+%p2p = [6 7 8];
+p2p = [1 2 4];
 pmin1 = min(pc_data(:, p2p(1)));
 pmax1 = max(pc_data(:, p2p(1)));
 pmin2 = min(pc_data(:, p2p(2)));
@@ -141,7 +145,7 @@ paxis = [pmin1 pmax1 pmin2 pmax2 pmin3 pmax3];
 %p2p = [13 14 15 ];
 
 
-sssnelwindow = newWindow(1):newWindow(2);
+window = newWindow(1):newWindow(2);
 numBins = numel( window );
 
 arrayOnsetBin = find( window == min( [ window(end) 0 ] ) );
@@ -164,11 +168,12 @@ trail_length = 20;
 
 %%
 %
-for nt = 1 : 5 :numel( window )
+for nt = 1 : 2 :numel( window )
+%for nt = 26
     %for nt = 1:5:80
     clf;
-    for nday = 1 : numel( alf )
-        
+    %for nday = 1 : numel( alf )
+    for nday = [1 5]    
         for itr = 1:numel( trialsToKeepInds{ nday } )
             ntr = trialsToKeepInds{ nday }( itr );
             cueInd = find( cueLocs{nday} == UEs{nday}.cueLoc( ntr ) );
@@ -271,15 +276,16 @@ for nt = 1 : 5 :numel( window )
         ylabel(p(np), p2p(2) );
         zlabel(p(np), p2p(3) );
         % this works for dim [6 7 8];
-                set(p(np), 'view', [-23.6000    7.6000]);
+        %set(p(np), 'view', [-23.6000    7.6000]);
         
         %set(p(np), 'view', [ -198.0000   -2.8000]);
         %set(p(np), 'view', [-30.4000 7.6000]);
-        %set(p(np), 'view', [-39.2000   19.6000]); % many videos made using this view
+        set(p(np), 'view', [-39.2000   19.6000]); % many videos made using this view
         %axis(p(np), [ -1.36    0.4   -0.79    0.63   -1.3615    0.9]);
         %axis(p(np), [-1.5    0.4   -1.10    1.7203   -1.9    0.6567]);% this works well for cueOnset
         %axis(p(np), [-2.5    1   -1.5   2   -2    2]); % SFN cueOnset
-        axis(p(np), [ -2    2   -2   2   -2    2]); % SFN arrayOnset
+        %axis(p(np), [ -2    2   -2   2   -2    2]); % SFN arrayOnset
+        axis(p(np), [-3    3   -3   3   -3    3]); % SFN cueOnset
         
         %if ~isempty( paxis )
         %    axis(p(np), paxis );

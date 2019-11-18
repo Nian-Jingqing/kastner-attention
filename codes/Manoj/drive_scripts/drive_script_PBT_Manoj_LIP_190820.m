@@ -48,7 +48,7 @@ par = Pulvinar.RunParams;
 par.spikeBinMs = 20;
 par.c_batch_size = 2; % must be < 1/5 of the min trial count
 par.trainToTestRatio = 10;
-par.useAlignmentMatrix = true; % use alignment matrices
+par.useAlignmentMatrix = false; % use alignment matrices
 
 % the following params are specified in pbt script run manager
 par.c_factors_dim = 40; 

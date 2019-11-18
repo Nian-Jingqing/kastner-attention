@@ -55,8 +55,9 @@ for nday = 1 : numel( alf )
     isCorrectArray{ nday } = arrayfun(@(x) strcmp(x, 'HRHR'), UEs{ nday }.arrayShapesCorrect);
     isLongDelay{ nday } = ( [ alf{ nday }.arrayDim ] - [ alf{ nday }.arrayOnset] ) > ( minimalDelay/binsize_rescaled ); % try this later
     isCueLoc3{ nday } = UEs{ nday }.cueLoc == 3;
-    trialsToKeep{ nday } = isCorrectArray{ nday } & ( isLongDelay{ nday } )' & isCueLoc3{ nday };% & UE2.isHoldTrial;
-    %trialsToKeep{ nday } = isCueLoc3{ nday }; %for cueOnset jittering
+    % trialsToKeep{ nday } = isCorrectArray{ nday } & ( isLongDelay{ nday } )' & isCueLoc3{ nday };% & UE2.isHoldTrial;
+    trialsToKeep{ nday } = ( isLongDelay{ nday } )' & isCueLoc3{ nday } & UEs{nday}.isHoldTrial;
+    % trialsToKeep{ nday } = isCueLoc3{ nday }; %for cueOnset jittering
 
     cueLocs{ nday } = unique(UEs{ nday }.cueLoc);
 
@@ -89,7 +90,7 @@ end
 %% for arrayOnset
 nNeurons = size(alf{5}(1).spikes, 1);
 trialsToKeepInds{ 5 } = find( trialsToKeep{ 5 } );
-baseWindow = round( [-100 300] / binsize_rescaled );
+baseWindow = round( [300 700] / binsize_rescaled );
 whichfieldTW = 'arrayOnset';
 
 timePoints = baseWindow(1) : baseWindow(2);

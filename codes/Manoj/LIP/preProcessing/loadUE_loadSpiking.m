@@ -1,3 +1,4 @@
+function [UE, alf] = loadUE_loadSpiking(baseDir, dataset, good_channels, binsize_rescaled)
 %% load UEs
 UE_baseDir = '/snel/share/share/derived/kastner/data_processed/ManojData/singleArea/LIP/UEs/';
 for nday = 1:numel(dataset)
@@ -9,18 +10,18 @@ for nday = 1:numel(dataset)
 end
 
 %% load and smooth/rebin spikes
-baseDir = '/snel/share/share/derived/kastner/data_processed/ManojData/singleArea/LIP/notch_filtering/notchFilterPlusBandPass/spiking_data/'; 
+%baseDir = '/snel/share/share/derived/kastner/data_processed/ManojData/singleArea/LIP/notch_filtering/notchFilterPlusBandPass/spiking_data/'; 
 alf = {};
 for nday = 1:numel(dataset)
     fileName = ['LIP_spiking_r_', dataset(nday).date, '.mat'];
     loadFile = fullfile(baseDir, fileName);
-    disp( sprintf( 'loading day %g / %g', nday, numel( datasets ) ) );
+    disp( sprintf( 'loading day %g / %g', nday, numel( dataset ) ) );
     load(loadFile);
     %keyboard
     tc_r = R.Rstruct(r.r);
     % smooth and rebin
     sigma = 100;
-    binsize_rescaled = 10;
+    %binsize_rescaled = 10;
     %
     tc_r.smoothFieldInR('spikes', 'spike_smoothed', sigma, 1);
     tc_rebinned = tc_r.binData({'spike_smoothed'}, [binsize_rescaled]);

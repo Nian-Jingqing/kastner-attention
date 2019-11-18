@@ -4,6 +4,7 @@ addpath('/snel/home/fzhu23/bin/LFADS/lfads-run-manager/src')
 addpath('/snel/home/fzhu23/bin/analysis_tools')
 addpath('/snel/home/fzhu23/Projects/Pulvinar/codes')
 addpath('/snel/home/fzhu23/Projects/Pulvinar/myTools')
+
 %% Locate and specify the datasets
 datasetPath = '/snel/share/share/derived/kastner/data_processed/ManojData/singleArea/LIP/thresholdCrossings/highCorr_rm_noMasking/preAlignedData_added/selected/';
 dc = Pulvinar.DatasetCollection(datasetPath);

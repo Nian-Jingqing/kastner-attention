@@ -1,5 +1,5 @@
 %% make a place to store output videos
-outdir = '/snel/share/share/derived/kastner/LFADS_runs/pulvinar/Multi-day/multiDay_CO_AO_TD_HoldRel_JanToApr/postAnalysis/reRun180614_20190508/lowD_traj/arrayOnset/';
+outdir = '/snel/share/share/derived/kastner/LFADS_runs/pulvinar/Multi-day/multiDay_CO_AO_TD_HoldRel_JanToApr/postAnalysis/reRun180614_20190508/lowD_traj/arrayOnset678/';
 if ~isdir( outdir )
     mkdir( outdir );
 end

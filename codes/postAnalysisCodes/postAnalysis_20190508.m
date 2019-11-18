@@ -12,6 +12,8 @@ addpath('/snel/home/fzhu23/Projects/Pulvinar/old_pulvinarRepo/Kastner_Attention/
 %%
 buildRuns_20190508
 
+%%
+%loadChoppedCombined_twoLocations
 
 %%
 doPSTH_190508

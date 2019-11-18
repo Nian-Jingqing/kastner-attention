@@ -59,27 +59,27 @@ end
 
 % % this window was used for finding oscillations during arrayDelay in
 % %         factors 6 7 8 for session 6
-%window = round( [-300  00] / binsize_rescaled );
+window = round( [-300  00] / binsize_rescaled );
 
-window = round([0 400]/binsize_rescaled);
+%window = round([0 400]/binsize_rescaled);
 
 %window = round( [-1200 : 500] / binsize );
 
-%whichfieldDimred = 'arrayDim';
+whichfieldDimred = 'arrayDim';
 %whichfieldDimred = 'arrayOnset';
-whichfieldDimred = 'cueOnset';
+%whichfieldDimred = 'cueOnset';
 
 %whichfieldPlot = 'arrayDim';
 %newWindow = round( [-1000  100] / binsize_rescaled );
 
 
 
-%whichfieldPlot = 'arrayOnset';
-%newWindow = round( [0  1100] / binsize_rescaled );
+whichfieldPlot = 'arrayOnset';
+newWindow = round( [0  1000] / binsize_rescaled );
 
 
-whichfieldPlot = 'cueOnset';
-newWindow = round( [0  600] / binsize_rescaled );
+%whichfieldPlot = 'cueOnset';
+%newWindow = round( [0  600] / binsize_rescaled );
 
 
 %%
@@ -147,8 +147,8 @@ p2p = [1 2 3];
 
 
 
-% p2p = [7 8 9];
-p2p = [1 2 3];
+p2p = [6 7 8];
+%p2p = [1 2 3];
 pmin1 = min(pc_data(:, p2p(1)));
 pmax1 = max(pc_data(:, p2p(1)));
 pmin2 = min(pc_data(:, p2p(2)));
@@ -303,14 +303,14 @@ set(gca,'visible','off')
               %set(p(np), 'view', [-23.6000    7.6000]);
               %set(p(np), 'view', [-22.4000 1.2000]); % for arrayOnset, run 181128
         %set(p(np), 'view', [ -198.0000   -2.8000]);
-        set(p(np), 'view', [-30.4000 7.6000]);
-        %set(p(np), 'view', [-39.2000   19.6000]); % many videos made using this view
+        %set(p(np), 'view', [-30.4000 7.6000]);
+        set(p(np), 'view', [-39.2000   19.6000]); % many videos made using this view
         %set(p(np), 'view', [69.6000  90.0000]); % this works well for arrayDim for rate space for run 181207
         %axis(p(np), [ -1.36    0.4   -0.79    0.63   -1.3615    0.9]);
         %axis(p(np), [-1.5    0.4   -1.10    1.7203   -1.9    0.6567]);% this works well for cueOnset
         %axis(p(np), [-2.5    1   -1.5   2   -2    2]); % SFN cueOnset
         %axis(p(np), [-8    4   -2   3   -2    4]); % this works well for arrayDim for rate space for run 181207
-        axis(p(np), [-8    8   -8   8   -8    8]);  % try something large first
+        axis(p(np), [-2    2   -2   2   -2    2]);  % try something large first
         %        axis(p(np), [ -1.5    0.8   -1    1   -1.5    1]); % SFN arrayOnset
         %axis(p(np), [ -0.2    0.2   -0.2    0.2   -0.2    0.2]); % cueOnset later PCs
         

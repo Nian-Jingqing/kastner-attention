@@ -67,6 +67,7 @@ spikes((allSpikesMS > 25), :) = 0;
 % % get rid of MU 1 - 4
 %spikes = spikes(:, 5:end);
 stream.spikes = sparse(spikes);
+stream.externalInputs = construct_extInp(UE, size(spikes, 1));
 
 %%
 dtMS = 1;
@@ -76,10 +77,16 @@ C.smoothField( 'spikes', 'spikes_smoothed', sigma_neural );
 r = Datasets.PulvinarTools.pulvinarData( C.makeTrialsFromData( startInds, stopInds, trialstruct ) );
 %keyboard
 %% save
-savedir = '/snel/share/share/derived/kastner/data_processed/ManojData/singleArea/LIP/notch_filtering/notchFilterPlusBandPass/spiking_data/';
+%savedir = '/snel/share/share/derived/kastner/data_processed/ManojData/singleArea/LIP/notch_filtering/notchFilterPlusBandPass/spiking_data/lower_thresh/';
+%savedir = '/snel/share/share/derived/kastner/data_processed/ManojData/singleArea/LIP/notch_filtering/notchFilterPlusBandPass/spiking_data/';
+savedir = '/snel/share/share/derived/kastner/data_processed/ManojData/singleArea/LIP/notch_filtering/notchFilterPlusBandPass/spiking_data/withExtInp_lowerThresh/';
+if ~isdir(savedir)
+    mkdir(savedir);
+end
 
-%cd(savedir);
+cd(savedir);
 saveFileName = ['LIP_spiking_r_', date, '.mat'];
 outputfile = fullfile(savedir, saveFileName);
+r.r(1).threshold = multiple;
 save(outputfile,'r', '-v7.3');
 clear all

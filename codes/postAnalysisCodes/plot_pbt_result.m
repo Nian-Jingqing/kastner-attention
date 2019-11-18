@@ -1,5 +1,5 @@
 %% make pbt plots to compare the two runs: 180614 and 190508
-rmpath(genpath('/snel/home/fzhu23/bin/PBT_HP_opt/'));
+rmpath(genpath('/snel/home/fzhu23/bin/pbt-hp-opt/'));
 addpath(genpath('/snel/home/fzhu23/bin/PBT_HP_opt_modifiedPlotting_190607/'));
 %rmpath(genpath('/snel/home/fzhu23/bin/PBT_HP_opt_modifiedPlotting_190607/')); addpath(genpath('/snel/home/fzhu23/bin/PBT_HP_opt/'));
 
@@ -82,3 +82,18 @@ PBT_analysis.make_pbt_run_plots(pbt_run_path_14, results_dir_14)
 pbt_run_path_15 = '/snel/share/share/derived/kastner/model_interaction/runs/downstreamLorenz_191018/pbt_run/'
 results_dir_15 = '/snel/share/share/derived/kastner/model_interaction/runs/downstreamLorenz_191018/hp_progression/'
 PBT_analysis.make_pbt_run_plots(pbt_run_path_15, results_dir_15)
+
+%% plot pbt results for LIP data 20191103
+pbt_run_path_16 = '/snel/share/share/derived/kastner/LFADS_runs/Manoj/LIP/runs/tc_newSP_PBT_191103/param_W2qcIj/all/pbt_run/';
+results_dir_16 = '/snel/share/share/derived/kastner/LFADS_runs/Manoj/LIP/postAnalysis/tc_newSP_PBT_191103/pbt_result/';
+PBT_analysis.make_pbt_run_plots(pbt_run_path_16, results_dir_16)
+
+%% plot pbt results for LIP data 20191105
+pbt_run_path_17 = '/snel/share/share/derived/kastner/LFADS_runs/Manoj/LIP/runs/tc_newSP_PBT_191105/param_-TPmtw/all/pbt_run/';
+results_dir_17 = '/snel/share/share/derived/kastner/LFADS_runs/Manoj/LIP/postAnalysis/tc_newSP_PBT_191105/pbt_result/'
+PBT_analysis.make_pbt_run_plots(pbt_run_path_17, results_dir_17)
+
+%% plot pbt results for LIP data 20191106
+pbt_run_path_18 = '/snel/share/share/derived/kastner/LFADS_runs/Manoj/LIP/runs/tc_newSP_PBT_191106/param_xrwk7Z/all/pbt_run/';
+results_dir_18 = '/snel/share/share/derived/kastner/LFADS_runs/Manoj/LIP/postAnalysis/tc_newSP_PBT_191106/pbt_result/'
+PBT_analysis.make_pbt_run_plots(pbt_run_path_18, results_dir_18)
