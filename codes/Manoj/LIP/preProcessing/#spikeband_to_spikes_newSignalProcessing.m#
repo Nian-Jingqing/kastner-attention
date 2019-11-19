@@ -56,7 +56,7 @@ for i = 1:numel(dataset)
     tic;
     date = dataset(i).date;
     spikeBandBase = '/snel/share/share/data/kastner/Manoj/LIP/spikeBand/notchFilt_bandPass/tmp/';
-    spikeBandFileName = ['Remy_', date, '_LIP_spikeband.mat'];d
+    spikeBandFileName = ['Remy_', date, '_LIP_spikeband.mat'];
     spikeBandFile = fullfile(spikeBandBase, spikeBandFileName);
     bb = load(spikeBandFile);
     bb = bb.spikeband;

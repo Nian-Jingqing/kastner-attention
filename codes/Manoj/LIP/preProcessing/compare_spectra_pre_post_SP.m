@@ -15,7 +15,7 @@ dataset(8).date = '03152019';
 addpath('../Matlab_Offline_Files_SDK/');
 addpath('rawDataProcessing');
 %%
-day = 4;
+day = 1;
 fn = ['Remy_RP_' dataset(day).date '_LIP_WB.pl2'];
 %fn = 'Remy_RP_03092019_LIP_WB.pl2';
 raw_data_path = '/mnt/scratch/feng/LIP';
@@ -111,7 +111,7 @@ prevMsVals = zeros(MOV_AVG_BUFFER_SIZE, numChannels, 'single');
 %%
 % initialize some variables for our big for loop
 currentBufferStartInd = 1;
-numFramesProcessed = 0;
+numFramesProcessed = 0; % was 0.
 channelMsInd = 1;
 lastBlockTime = 0;
 
@@ -123,7 +123,7 @@ clear priorData pl2 tmp
 dataBuffer_normd = normalize(dataBuffer, 'centered');
 Fs = 40000;
 % apply low pass first
-[b,a] = butter(4, [5000] / (Fs / 2), 'low');
+[b,a] = butter(10, [5000] / (Fs / 2), 'low');
 dataBuffer_normd = filtfilt(b, a, dataBuffer_normd');
 dataBuffer_normd = dataBuffer_normd';
 
