@@ -1,46 +1,38 @@
 %% datasets
-datasets(1).shortName = '0218';
-datasets(1).midName = '021819';
-datasets(1).longName = '02182019';
-datasets(2).shortName = '0306';
-datasets(2).midName = '030619';
-datasets(2).longName = '03062019';
-datasets(3).shortName = '0311';
-datasets(3).midName = '031119';
-datasets(3).longName = '03112019';
-datasets(4).shortName = '0314';
-datasets(4).midName = '031419';
-datasets(4).longName = '03142019';
-datasets(5).shortName = '0406';
-datasets(5).midName = '040619';
-datasets(5).longName = '04062019';
-datasets(6).shortName = '0425';
-datasets(6).midName = '042519';
-datasets(6).longName = '04252019';
-datasets(7).shortName = '0502';
-datasets(7).midName = '050219';
-datasets(7).longName = '05022019';
+datasets(1).shortName = '170127';
+datasets(1).longName = '20170127';
+datasets(2).shortName = '170130';
+datasets(2).longName = '20170130';
+datasets(3).shortName = '170201';
+datasets(3).longName = '20170201';
+datasets(4).shortName = '170211';
+datasets(4).longName = '20170211';
+datasets(5).shortName = '170308';
+datasets(5).longName = '20170308';
+datasets(6).shortName = '170311';
+datasets(6).longName = '20170311';
 
 %% load data
-loadpath = '/snel/share/share/derived/kastner/data_processed/ManojData/singleArea/LIP/thresholdCrossings/withoutDataMasking/higherThreshold/';
+loadpath = ['/snel/share/share/derived/kastner/data_processed/pulvinar/' ...
+            'multi-unit/continuousOverlapChop/multiDay_JanToMar/withExternalInput_withLag/'];
 
 % iterate over days, load each day and add it to a 'olapChopped' cell array
-clear tc_data
+clear olapChopped
 for nday = 1:numel( datasets )
-    disp( sprintf( 'loading tc day %g / %g', nday, numel( datasets ) ) );
-    fname = sprintf( '%s%s_v1.mat', loadpath, datasets( nday ).midName );
+    disp( sprintf( 'loading chopped day %g / %g', nday, numel( datasets ) ) );
+    fname = sprintf( '%s%s_cueOnArrayOnTargetDim_HoldRel.mat', savepath, datasets( nday ).shortName );
 
     tmp = load( fname );
-    tc_data{ nday } = tmp.combinedData;
+    olapChopped{ nday } = tmp.combinedData;
 end
 
 %%
 %for nday = 1:numel(olapChopped)
-for nday = 1:7
-    allSpikes{nday} = [tc_data{nday}.r.r.spikes];
+for nday = 6
+    allSpikes{nday} = [olapChopped{nday}.r.r.spikes];
     sequence_length = size(allSpikes{nday}, 2);
     %corr_matrix
-    sX = full(allSpikes{nday}(:, 0.2*sequence_length:0.5*sequence_length));
+    sX = full(allSpikes{nday}(:, 1:0.5*sequence_length));
     corr_r = zeros(1,size(sX,1)^2);
 
     tic;
@@ -57,7 +49,6 @@ for nday = 1:7
             corr_r(i+1) = nan;
         end
         idx_par(:, i + 1) = [idx1;idx2];
-        disp( sprintf( 'running %g / %g', i, x ) );
     end
     toc;
     %corr_r = corr_r(2:end);
@@ -71,80 +62,27 @@ for nday = 1:7
     corr_days{nday} = corr_r;
     corrIdx_days{nday} = idx_par;
     %correlationMatrices{nday} = corrcoef(allSpikes{nday});
-
-    % formatting correlation matrix
-    corr_r = corr_r(2:end);
-    idx_par = idx_par(:, 2:end);
-    corr_r = reshape(corr_r, [size(sX,1) size(sX,1)]);
-    for j = 1:size(sX,1)
-        tmp2end = corr_r(1:end-1, j);
-        corr_r(1,j) = corr_r(end,j);
-        corr_r(2:end, j) = tmp2end;
-    end
-    corr_matrix{nday} = corr_r;
-    corrIdx{nday} = idx_par;
-    
 end
-
 
 %%
-saveDir = '/snel/share/share/derived/kastner/data_processed/ManojData/singleArea/LIP/highCorrCheck/higherThreshold/'
-if ~isdir(saveDir)
-    mkdir(saveDir)
-end
-
+saveDir = '/snel/share/share/derived/kastner/data_processed/pulvinar/multi-unit/continuousOverlapChop/multiDay_JanToMar/withExternalInput_withLag/';
 cd(saveDir)
-%%
-for nday = 1:7
+for nday = 1:numel(olapChopped)
     f1 = figure
-    imagesc(corr_matrix{nday})
+    imagesc(corr_days{nday})
     colorbar
-    title(['MU-correlations-day ' int2str(nday)])
     print(f1, ['MU_correlations_day ' int2str(nday)], '-dpng');
 end
 
 %%
 f1 = figure
-for nday = 1:7
-    subplot(2, 4, nday);
+for nday = 1:numel(olapChopped)
+    subplot(2, 3, nday);
     histogram(corr_days{nday});
     title(['MU-correlations-day ' int2str(nday)])
 end
 set(gcf, 'Position', [86, 53, 1612, 857])
 print(f1, 'Distribution_allDays', '-dpng');
-
-%% find high corr channels:
-day = 7;
-high_corr_idx = find(corr_days{day} > 0.09);
-which_pair = corrIdx_days{day}(:, high_corr_idx);
-
-%%
-% 02182019
-hc_channels{1} = [24, 25, 26, 27];
-hc_channels{2} = [23, 24, 25, 27, 28];
-hc_channels{3} = [8, 9];
-hc_channels{4} = [];
-hc_channels{5} = [18, 19];
-hc_channels{6} = [];
-hc_channels{7} = [31, 32];
-
-
-%% find which channels have higher firing rate
-meanFR = mean(allSpikes{day}(hc_channels{day}, 1:round(0.5*end)), 2);
-
-%%
-% 02182019
-rm_channels{1} = [24, 26];
-rm_channels{2} = [24, 25, 27];
-rm_channels{3} = [9];
-rm_channels{4} = [];
-rm_channels{5} = [18];
-rm_channels{6} = [];
-rm_channels{7} = [32];
-
-
-
-
 
 %% clear up data and save
 savepath = ['/snel/share/share/derived/kastner/data_processed/pulvinar/' ...

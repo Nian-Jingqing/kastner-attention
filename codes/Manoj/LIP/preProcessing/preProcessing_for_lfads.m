@@ -48,7 +48,7 @@ for nday = 1:numel(datasets)
         whereNan_msb = find( isnan( bb.minSpikeBand( : , ich ) ) );
         chMsb{ ich } = bb.minSpikeBand(1:(whereNan_msb(1) - 1), ich);
     end
-    
+
     %% compute constant std
     chStdVec = zeros(1,32);
     for ich = 1:numel( chVar )
@@ -91,12 +91,12 @@ for nday = 1:numel(datasets)
         trialstruct(itrial).fixType = UE.fixType(itrial);
         trialstruct(itrial).isValidTarget = UE.isValidTarget(itrial);
         trialstruct(itrial).isSameObjTarget = UE.isSameObjTarget(itrial);
-        trialstruct(itrial).isDiffObjTarget = UE.isDiffObjTarget(itrial);    
+        trialstruct(itrial).isDiffObjTarget = UE.isDiffObjTarget(itrial);
         trialstruct(itrial).startTime = startInds(itrial);
         trialstruct(itrial).endTime = stopInds(itrial);
         trialstruct(itrial).startInd = startInds(itrial);
         trialstruct(itrial).endInd = stopInds(itrial);
-        trialstruct(itrial).condition = UE.cueType(itrial); % need to change!!        
+        trialstruct(itrial).condition = UE.cueType(itrial); % need to change!!
     end
 
     %% put spike train into a Continuous class
