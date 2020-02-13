@@ -55,7 +55,8 @@ thresh_multiple = [3.5, 3.5, 3.5, 3.5, 3.5]; % for 3rd and 4th cohort
 for i = 1:numel(dataset)
     tic;
     date = dataset(i).date;
-    spikeBandBase = '/snel/share/share/data/kastner/Manoj/LIP/spikeBand/notchFilt_bandPass/tmp/';
+    %spikeBandBase = '/snel/share/share/data/kastner/Manoj/LIP/spikeBand/notchFilt_bandPass/tmp/';
+    spikeBandBase = '/snel/share/share/data/kastner/Manoj/LIP/spikeBand/notchFilt_bandPass/tmp/4th_cohort_noLowPass/';
     spikeBandFileName = ['Remy_', date, '_LIP_spikeband.mat'];
     spikeBandFile = fullfile(spikeBandBase, spikeBandFileName);
     bb = load(spikeBandFile);

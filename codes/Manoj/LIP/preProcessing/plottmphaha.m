@@ -7,7 +7,7 @@ addpath('/snel/home/fzhu23/Projects/Pulvinar/old_pulvinarRepo/Kastner_Attention/
 %dataset(2).date = '03062019';
 %dataset(3).date = '03112019';
 %dataset(4).date = '03142019';
-%dataset(5).date = '03272019'; % previously didn't work
+dataset(1).date = '03272019'; % previously didn't work
 %dataset(5).date = '04062019';
 %dataset(6).date = '04252019';
 %dataset(7).date = '05022019';
@@ -24,16 +24,16 @@ addpath('/snel/home/fzhu23/Projects/Pulvinar/old_pulvinarRepo/Kastner_Attention/
 %dataset(9).date = '03022019';
 %dataset(10).date = '03032019';
 
-dataset(1).date = '02272019';
-dataset(2).date = '03042019';
-dataset(3).date = '03072019';
-dataset(4).date = '03092019';
-dataset(5).date = '03102019';
-dataset(6).date = '03122019';
-dataset(7).date = '03132019';
-dataset(8).date = '03152019';
+%dataset(1).date = '02272019';
+%dataset(2).date = '03042019';
+%dataset(3).date = '03072019';
+%dataset(4).date = '03092019';
+%dataset(5).date = '03102019';
+%dataset(6).date = '03122019';
+%dataset(7).date = '03132019';
+%dataset(8).date = '03152019';
 
-for i = 1:8
+for i = numel(dataset)
     date = dataset(i).date;
     spikeBandBase = '/snel/share/share/data/kastner/Manoj/LIP/spikeBand/notchFilt_bandPass/tmp/';
     spikeBandFileName = ['Remy_', date, '_LIP_spikeband.mat'];

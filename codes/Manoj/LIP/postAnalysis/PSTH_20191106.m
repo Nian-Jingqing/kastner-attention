@@ -1,6 +1,6 @@
 %%
 % basic PSTH save root
-saveRoot = '/snel/share/share/derived/kastner/LFADS_runs/Manoj/LIP/postAnalysis/tc_newSP_PBT_191107/PSTH/';
+saveRoot = '/snel/share/share/derived/kastner/LFADS_runs/Manoj/LIP/postAnalysis/tc_newSP_PBT_191120/PSTH/tmp_dsac/';
 if ~isdir(saveRoot)
     mkdir(saveRoot);
 end
@@ -54,11 +54,11 @@ end
 
 
 %% plotting PSTHs
-pre_post_times = [300, 500] / binsize_rescaled;
+pre_post_times = [-300, 500] / binsize_rescaled;
 t = pre_post_times;
 t = [-t(1):-1 0:t(2)] * binsize_rescaled; %t(end)=[];
 
-for nday = 1:10
+for nday = [2, 5, 6]
     %for nday = 1:numel(dataset)
     saveRootDay = fullfile(saveRoot, dataset(nday).date);
     if ~isdir(saveRootDay)
@@ -100,6 +100,7 @@ for nday = 1:10
             end
             set(gca,'XTick',[1 (3/8)*length(timePoints) length(timePoints)]);
             set(gca,'XTickLabels',{'-300ms', 'cueOnset' ,'+500ms'});
+            %set(gca,'XTickLabels',{'cueOnset' ,'+300ms', '+800ms'});
             title(s1, 'Real', 'FontSize', 16);
             ylabel('Firing Rate');
             axes(s1)
@@ -124,6 +125,7 @@ for nday = 1:10
                 hold on       
             end
             set(gca,'XTick',[1 (3/8)*length(timePoints) length(timePoints)]);
+            %set(gca,'XTickLabels',{'cueOnset' ,'+300ms', '+800ms'});
             set(gca,'XTickLabels',{'-300ms', 'cueOnset' ,'+500ms'});
             title(s2, 'LFADS', 'FontSize', 16);
             ylabel('Firing Rate');
@@ -146,6 +148,7 @@ for nday = 1:10
                 a = squeeze(PSTH(nday).cueOn.(plotIndicator{j}).real.raster_tensor(n,:,:));
                 imagesc(a)
                 set(gca,'XTick',[1 (3/8)*length(timePoints) length(timePoints)]);
+                %set(gca,'XTickLabels',{'cueOnset' ,'+300ms', '+800ms'});
                 set(gca,'XTickLabels',{'-300ms', 'cueOnset' ,'+500ms'});
                 title(condStr);
                 ylabel('Trials');
@@ -155,6 +158,7 @@ for nday = 1:10
                 a = squeeze(PSTH(nday).cueOn.(plotIndicator{j}).lfads.raster_tensor(n,:,:));
                 imagesc(a)
                 set(gca,'XTick',[1 (3/8)*length(timePoints) length(timePoints)]);
+                %set(gca,'XTickLabels',{'cueOnset' ,'+300ms', '+800ms'});
                 set(gca,'XTickLabels',{'-300ms', 'cueOnset' ,'+500ms'});
                 title(condStr);
                 ylabel('Trials');
@@ -163,7 +167,8 @@ for nday = 1:10
 
             suptitle(['Multi-unit ' int2str(alf{nday}(1).channel_info(n))]);
             set(f2, 'Position', [428 4 1193 962]);
-            print(f2,['Multi-unit ' int2str(alf{nday}(1).channel_info(n)) ' - ' cueCondType{nIndicator}], '-dpng');
+            print(f2,['Multi-unit ' int2str(alf{nday}(1).channel_info(n)) ' - ' cueCondType{nIndicator}], '-dpdf');
+            %print(f2,['Multi-unit ' int2str(alf{nday}(1).channel_info(n)) ' - ' cueCondType{nIndicator}], '-dpng');
 
             %printpdf(f2,int2str(nIndices(n)) )
             close;

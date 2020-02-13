@@ -33,19 +33,21 @@ outDir = '/snel/share/share/data/kastner/Manoj/LIP/eventMat/';
 %dataset(7).date = '03132019';
 %dataset(8).date = '03152019';
 
-dataset(1).date = '03162019';
-dataset(2).date = '03182019';
-dataset(3).date = '03292019';
-dataset(4).date = '03312019';
-dataset(5).date = '04012019';
-dataset(6).date = '04032019';
-dataset(7).date = '04052019';
-dataset(8).date = '04242019';
-dataset(9).date = '04262019';
-dataset(10).date = '04292019';
+%dataset(1).date = '03162019';
+%dataset(2).date = '03182019';
+%dataset(3).date = '03292019';
+%dataset(4).date = '03312019';
+%dataset(5).date = '04012019';
+%dataset(6).date = '04032019';
+%dataset(7).date = '04052019';
+%dataset(8).date = '04242019';
+%dataset(9).date = '04262019';
+%dataset(10).date = '04292019';
+
+dataset(1).date = '03082019';
 
 %%
-for i = 1:10
+for i = numel(dataset)
     filename = ['Remy_RP_' dataset(i).date '_LIP_WB.pl2'];
     filedir = fullfile(baseDir, filename);
     outfilename = ['eventmat_' dataset(i).date '.mat'];

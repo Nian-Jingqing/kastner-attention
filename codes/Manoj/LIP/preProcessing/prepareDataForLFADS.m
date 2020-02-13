@@ -17,6 +17,8 @@ dataset(14).date = '02282019';
 dataset(15).date = '03012019';
 dataset(16).date = '03022019';
 dataset(17).date = '03032019';
+dataset(18).date = '03312019';
+dataset(19).date = '04012019';
 
 %% good channel info
 good_channels{1} = [8, 22, 23, 24, 25, 26, 27, 28, 29, 31, 32];
@@ -36,8 +38,11 @@ good_channels{14} = [13, 14, 15, 16, 23, 24, 25, 30, 32];
 good_channels{15} = [10, 20, 30, 31];
 good_channels{16} = [21, 24, 27, 28, 30, 32];
 good_channels{17} = [18, 25, 27, 29, 30, 31];
+good_channels{18} = [15 16 21 22 23 29 32];
+good_channels{19} = [6 7 13 14 15 19];
 
-selected_days = [1, 2, 4, 8, 9, 10, 11, 13, 14, 17];
+%selected_days = [1, 2, 4, 8, 9, 10, 11, 13, 14, 17]; % first 10 best sessions
+selected_days = [18, 19];
 
 highCorr_channels{1} = 24;
 highCorr_channels{2} = 24;
@@ -45,6 +50,8 @@ highCorr_channels{8} = [15, 22];
 highCorr_channels{9} = [4, 17, 20];
 highCorr_channels{10} = 19;
 highCorr_channels{13} = 16;
+highCorr_channels{18} = 22;
+highCorr_channels{19} = 14;
 highCorr_channels{numel(good_channels)} = [];
 
 %%
@@ -136,7 +143,7 @@ for iday = 1:numel(selected_days)
     combinedData.UE = UE{iday};
     combinedData.dayID = selected_days(iday);
     combinedData.channel_info = keep_channels{selected_days(iday)};
-    combinedData.date = dataset(iday).date;
+    combinedData.date = dataset(selected_days(iday)).date;
     cd(saveDir);
     saveName = [dataset(combinedData.dayID).date '_v2.mat'];
     save(saveName, 'combinedData', '-v7.3')

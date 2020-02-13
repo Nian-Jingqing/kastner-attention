@@ -23,7 +23,7 @@ for n = 1:nNeurons
         raster_tensor(n, itrial, :) = keepTrials_struct(itrial).(infield)(n, event_times(itrial) + timePoints);
     end
 end
-if strcmp(infield, 'rates')
+if strcmp(infield, 'rates') || strcmp(infield, 'factors')
     avg_rates = squeeze(mean(raster_tensor, 2));
     tmp_std = squeeze(std(raster_tensor,0, 2));
     stderror = tmp_std/sqrt(numel(keepTrials_struct));

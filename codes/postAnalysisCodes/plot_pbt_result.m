@@ -97,3 +97,13 @@ PBT_analysis.make_pbt_run_plots(pbt_run_path_17, results_dir_17)
 pbt_run_path_18 = '/snel/share/share/derived/kastner/LFADS_runs/Manoj/LIP/runs/tc_newSP_PBT_191106/param_xrwk7Z/all/pbt_run/';
 results_dir_18 = '/snel/share/share/derived/kastner/LFADS_runs/Manoj/LIP/postAnalysis/tc_newSP_PBT_191106/pbt_result/'
 PBT_analysis.make_pbt_run_plots(pbt_run_path_18, results_dir_18)
+
+%% plot pbt results for speech data 20191201
+pbt_run_path_19 = '/snel/share/share/derived/bg2_speech/runs/goAligned_PBT_191201/param_eDLFXB/all/pbt_run/';
+results_dir_19 = '/snel/share/share/derived/bg2_speech/postAnalysis/goAligned_PBT_191201/pbt_result/';
+PBT_analysis.make_pbt_run_plots(pbt_run_path_19, results_dir_19)
+
+%% plot pbt results for speech data 20191201
+pbt_run_path_20 = '/snel/share/share/derived/bg2_speech/runs/acausticAligned_PBT_200105/param_W5UcwB/all/pbt_run/';
+results_dir_20 = '/snel/share/share/derived/bg2_speech/postAnalysis/acousticAligned_PBT_200105/pbt_result/';
+PBT_analysis.make_pbt_run_plots(pbt_run_path_20, results_dir_20)

@@ -39,6 +39,9 @@ dataset(14).date = '02282019';
 dataset(15).date = '03012019';
 dataset(16).date = '03022019';
 dataset(17).date = '03032019';
+dataset(18).date = '03312019';
+dataset(19).date = '04012019';
+
 
 %% good channel info
 good_channels{1} = [8, 22, 23, 24, 25, 26, 27, 28, 29, 31, 32];
@@ -58,16 +61,20 @@ good_channels{14} = [13, 14, 15, 16, 23, 24, 25, 30, 32];
 good_channels{15} = [10, 20, 30, 31];
 good_channels{16} = [21, 24, 27, 28, 30, 32];
 good_channels{17} = [18, 25, 27, 29, 30, 31];
+good_channels{18} = [15 16 21 22 23 29 32]; % decided to get rid of 22
+good_channels{19} = [6, 7, 13, 14, 15, 19]; % decided to get rid of 14
+
 
 
 %% load data
 %loadpath = '/snel/share/share/derived/kastner/data_processed/ManojData/singleArea/LIP/thresholdCrossings/withoutDataMasking/higherThreshold/';
-loadpath = '/snel/share/share/derived/kastner/data_processed/ManojData/singleArea/LIP/notch_filtering/notchFilterPlusBandPass/spiking_data/';
+loadpath = '/snel/share/share/derived/kastner/data_processed/ManojData/singleArea/LIP/notch_filtering/notchFilterPlusBandPass/spiking_data/withExtInp_lowerThresh/';
 
 % iterate over days, load each day and add it to a 'olapChopped' cell array
 clear tc_data
 %for nday = 1:numel( datasets )
-for nday = 1:numel(dataset)
+%for nday = 1:numel(dataset)
+for nday = 19
     disp( sprintf( 'loading tc day %g / %g', nday, numel( dataset ) ) );
     fileName = ['LIP_spiking_r_', dataset(nday).date, '.mat'];
     loadFile = fullfile(loadpath, fileName);
@@ -78,7 +85,8 @@ for nday = 1:numel(dataset)
 end
 
 %% get rid of bad channels first (to speed up the analysis below)
-for nday = 1:numel(dataset)
+%for nday = 1:numel(dataset)
+for nday = 19
     for itrial = 1 : numel(tc_data{nday}.r.r)
         tc_data{nday}.r.r(itrial).spikes_selected = tc_data{nday}.r.r(itrial).spikes(good_channels{nday}, :);
     end
@@ -87,8 +95,8 @@ end
 
 
 %%
-%for nday = 1:numel(olapChopped)
-for nday = 1:numel(dataset)
+%for nday = 1:numel(dataset)
+for nday = 19
     allSpikes{nday} = [tc_data{nday}.r.r.spikes_selected];
     sequence_length = size(allSpikes{nday}, 2);
     %corr_matrix
@@ -148,7 +156,7 @@ end
 
 cd(saveDir)
 %%
-for nday = 1:17
+for nday = 19
     f1 = figure
     imagesc(corr_matrix{nday})
     colorbar
@@ -159,18 +167,20 @@ end
 %%
 f1 = figure
 isub = 1;
-for nday = [1, 2, 4, 8, 9, 10, 11, 13, 14, 17]
-    subplot(2, 5, isub);
+%for nday = [1, 2, 4, 8, 9, 10, 11, 13, 14, 17]
+for nday = 19
+    %subplot(2, 5, isub);
     histogram(corr_days{nday});
     title(['MU-correlations-day ' int2str(nday)])
-    isub = isub + 1;
+    %isub = isub + 1;
 end
 set(gcf, 'Position', [86, 53, 1612, 857])
-print(f1, 'Distribution_allDays', '-dpng');
+%print(f1, 'Distribution_allDays', '-dpng');
+print(f1, 'Distribution_day03312019', '-dpng');
 
 %% find high corr channels:
-day = 8;
-high_corr_idx = find(corr_days{day} > 0.1);
+day = 19;
+high_corr_idx = find(corr_days{day} > 0.05);
 which_pair = corrIdx_days{day}(:, high_corr_idx);
 
 %

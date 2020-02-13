@@ -1,4 +1,9 @@
 function plottingXCorr(n, xcorr_struct, condType, color, infield, titleKeyword, timeLag)
+
+    
+
+
+% ######################### FOR SHUFFLING #############################
     timeLagStr = num2str(timeLag);
     addpath('/snel/home/fzhu23/Projects/Pulvinar/myTools')
     shuffledFieldName = [infield, '_shuffled'];

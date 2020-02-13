@@ -1,5 +1,5 @@
 %%
-outdir = '/snel/share/share/derived/kastner/LFADS_runs/Manoj/LIP/postAnalysis/tc_newSP_PBT_191120/singleTrialPlots/targetOn/withFilteredRates/';
+outdir = '/snel/share/share/derived/kastner/LFADS_runs/Manoj/LIP/postAnalysis/tc_newSP_PBT_191120/singleTrialPlots/tmp/';
 if ~isdir( outdir )
     mkdir( outdir );
 end
@@ -33,10 +33,8 @@ end
 
 
 
-%newWindow = round( [100 700] / binsize_rescaled );
-newWindow = round( [-600 200] / binsize_rescaled );
-%whichfieldPlot = 'cueOnset';
-whichfieldPlot = 'targetStart';
+newWindow = round( [100 700] / binsize_rescaled );
+whichfieldPlot = 'cueOnset';
 
 timePoints = newWindow(1):newWindow(2);
 totalTrialsToKeep = sum( cellfun( @sum, trialsToKeep ) );
@@ -50,33 +48,22 @@ totalTrialsToKeep = sum( cellfun( @sum, trialsToKeep ) );
 cd(outdir)
 
 %% make single trial plots
-cmap = lines();
 % ind = 1;
 %for nday = 1 : numel( alf)
-for nday = 2
+for nday = 5
     trialsToKeepInds{ nday } = find( trialsToKeep{ nday } );
-    keyboard
     for itr = 1:numel( trialsToKeepInds{ nday } )
         ntr = trialsToKeepInds{ nday }( itr );
 
         f1 = figure;        
         % normalize the LFADS rates for each channel
         norm_rates = normalize(alf{ nday }( ntr ).rates(:, alf{ nday }( ntr ).( whichfieldPlot ) + timePoints ), 'centered');
-        %norm_rates = normalize(alf{ nday }( ntr ).rates_filtered(:, alf{ nday }( ntr ).( whichfieldPlot ) + timePoints ), 'centered');
         
-        sp(1) = subplot(2, 1, 1);
+        sp(1) = subplot(6, 1, 1);
         imagesc( norm_rates );
         %colormap(gca, flipud(gray))
-        %set(gca,'XTick',[1 0.5*numel(timePoints) numel(timePoints)]);
-        set(gca,'XTick',[1 0.75*numel(timePoints) 65/80*numel(timePoints) numel(timePoints)]);
-        set(gca,'XTickLabels',{'-600','TO', '+50', '+200'});
-        %set(gca,'XTickLabels',{'Cue+100','400','700'});
-
-        hold on
-        y = 1:size(norm_rates, 1);
-        x = ones(1, numel(y))*round((65/80)*numel(timePoints));
-        plot(x, y, 'Color', 0.85*cmap(alf{nday}(ntr).isHit+1,:), 'LineWidth', 3)
-        
+        set(gca,'XTick',[1 0.5*numel(timePoints) numel(timePoints)]);
+        set(gca,'XTickLabels',{'Cue+100','400','700'});
         title(sp(1), 'LFADS rates');
         ylabel('Multi-units');
         %         set(sp(7), 'FontSize', 7);
@@ -86,19 +73,55 @@ for nday = 2
 
 
         % plot raw spiking
-        sp(2) = subplot(2, 1, 2);
+        sp(2) = subplot(6, 1, 2);
         imagesc( alf{ nday }( ntr ).spikes(:, alf{ nday }( ntr ).( whichfieldPlot ) + timePoints ) );
         %c = flipud(gray);
         %c_1 = [c(1:3,:); c(38:64,:)];
         %colormap(gca, c_1)
-        %set(gca,'XTick',[1 0.5*numel(timePoints) numel(timePoints)]);
-        set(gca,'XTick',[1 0.75*numel(timePoints) 65/80*numel(timePoints) numel(timePoints)]);
-        %set(gca,'XTickLabels',{'Cue+100','400','700'});
-        set(gca,'XTickLabels',{'-600','TO', '+50', '+200'});
+        set(gca,'XTick',[1 0.5*numel(timePoints) numel(timePoints)]);
+        set(gca,'XTickLabels',{'Cue+100','400','700'});
         title(sp(2), 'Real Spiking');
         ylabel('Multi-units');
         % %         set(sp(8), 'FontSize', 7);
 
+
+        sp(3) = subplot(6,1,3);
+        plot( alf{ nday }( ntr ).spikes(3, alf{ nday }( ntr ).( whichfieldPlot ) + timePoints ), 'r' );
+        hold on
+        plot(norm_rates(3,:), 'b');
+        set(gca,'XTick',[1 0.5*numel(timePoints) numel(timePoints)]);
+        set(gca,'XTickLabels',{'Cue+100','400','700'});
+        title('neuron 3');
+        axis tight
+
+        sp(4) = subplot(6,1,4);
+        plot( alf{ nday }( ntr ).spikes(4, alf{ nday }( ntr ).( whichfieldPlot ) + timePoints ), 'r' );
+        hold on
+        plot(norm_rates(4,:), 'b');
+        set(gca,'XTick',[1 0.5*numel(timePoints) numel(timePoints)]);
+        set(gca,'XTickLabels',{'Cue+100','400','700'});
+        title('neuron 4');
+        axis tight
+
+        sp(5) = subplot(6,1,5);
+        plot( alf{ nday }( ntr ).spikes(5, alf{ nday }( ntr ).( whichfieldPlot ) + timePoints ), 'r');
+        hold on
+        plot(norm_rates(5,:), 'b');
+        set(gca,'XTick',[1 0.5*numel(timePoints) numel(timePoints)]);
+        set(gca,'XTickLabels',{'Cue+100','400','700'});
+        title('neuron 5');
+        axis tight
+
+        sp(6) = subplot(6,1,6);
+        plot( alf{ nday }( ntr ).spikes(6, alf{ nday }( ntr ).( whichfieldPlot ) + timePoints ), 'r');
+        hold on
+        plot(norm_rates(6,:), 'b');
+        set(gca,'XTick',[1 0.5*numel(timePoints) numel(timePoints)]);
+        set(gca,'XTickLabels',{'Cue+100','400','700'});
+        title('neuron 6');
+        axis tight
+
+        set(gcf, 'Position', [40 53 908 1033])
 
         %         set(sp(1), 'Position', [0.1300 0.5456 0.7750 0.6])
         %         set(sp(2), 'Position', [0.1300 0.1539 0.7750 0.3119]);

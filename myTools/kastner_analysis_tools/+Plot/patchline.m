@@ -92,7 +92,7 @@ if rem(numel(PVs),2) ~= 0
     % Odd number of inputs!
     error('patchline: Parameter-Values must be entered in valid pairs')
 end
-
+keyboard
 % Facecolor = 'k' is (essentially) ignored here, but syntactically necessary
 if isempty(zs)
     p = patch([xs(:);NaN],[ys(:);NaN],'k');

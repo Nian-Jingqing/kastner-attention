@@ -1,5 +1,5 @@
 %%
-outdir = '/snel/share/share/derived/kastner/LFADS_runs/Manoj/LIP/postAnalysis/tc_newSP_PBT_191120/singleTrialPlots/targetOn/withFilteredRates/';
+outdir = '/snel/share/share/derived/kastner/LFADS_runs/Manoj/LIP/postAnalysis/tc_newSP_PBT_191120/singleTrialPlots/targetOn/withFilteredFactors/alpha/';
 if ~isdir( outdir )
     mkdir( outdir );
 end
@@ -26,7 +26,7 @@ numTrialsTot = cellfun( @numel, alf );
 % %  they must also be hold trials, i.e. UE2.isHoldTrial
 
 for nday = 1 : numel( alf )
-    trialsToKeep{ nday } = (UE{nday}.barType == nBar) & (UE{nday}.cueType == nCue);
+    trialsToKeep{ nday } = (UE{nday}.cueType == nCue) & UE{nday}.isValidTarget & ((UE{nday}.targetOn - UE{nday}.cueOn) > 1100);;
 end
 
 %
@@ -34,7 +34,7 @@ end
 
 
 %newWindow = round( [100 700] / binsize_rescaled );
-newWindow = round( [-600 200] / binsize_rescaled );
+newWindow = round( [-800 200] / binsize_rescaled );
 %whichfieldPlot = 'cueOnset';
 whichfieldPlot = 'targetStart';
 
@@ -52,32 +52,29 @@ cd(outdir)
 %% make single trial plots
 cmap = lines();
 % ind = 1;
-%for nday = 1 : numel( alf)
-for nday = 2
+for nday = 1 : numel( alf)
     trialsToKeepInds{ nday } = find( trialsToKeep{ nday } );
-    keyboard
     for itr = 1:numel( trialsToKeepInds{ nday } )
         ntr = trialsToKeepInds{ nday }( itr );
 
         f1 = figure;        
         % normalize the LFADS rates for each channel
-        norm_rates = normalize(alf{ nday }( ntr ).rates(:, alf{ nday }( ntr ).( whichfieldPlot ) + timePoints ), 'centered');
-        %norm_rates = normalize(alf{ nday }( ntr ).rates_filtered(:, alf{ nday }( ntr ).( whichfieldPlot ) + timePoints ), 'centered');
+        norm_factors = normalize(alf{ nday }( ntr ).factors_filtered(:, alf{ nday }( ntr ).( whichfieldPlot ) + timePoints ), 'centered');
         
         sp(1) = subplot(2, 1, 1);
-        imagesc( norm_rates );
+        imagesc( norm_factors );
         %colormap(gca, flipud(gray))
         %set(gca,'XTick',[1 0.5*numel(timePoints) numel(timePoints)]);
-        set(gca,'XTick',[1 0.75*numel(timePoints) 65/80*numel(timePoints) numel(timePoints)]);
-        set(gca,'XTickLabels',{'-600','TO', '+50', '+200'});
+        set(gca,'XTick',[1 80/100*numel(timePoints) 85/100*numel(timePoints) numel(timePoints)]);
+        set(gca,'XTickLabels',{'-800','TO', '+50', '+200'});
         %set(gca,'XTickLabels',{'Cue+100','400','700'});
 
         hold on
-        y = 1:size(norm_rates, 1);
+        y = 1:size(norm_factors, 1);
         x = ones(1, numel(y))*round((65/80)*numel(timePoints));
         plot(x, y, 'Color', 0.85*cmap(alf{nday}(ntr).isHit+1,:), 'LineWidth', 3)
         
-        title(sp(1), 'LFADS rates');
+        title(sp(1), 'LFADS factors');
         ylabel('Multi-units');
         %         set(sp(7), 'FontSize', 7);
         %         set(sp(7), 'position', [0.1300 0.1039 0.7750 0.1])
@@ -87,7 +84,8 @@ for nday = 2
 
         % plot raw spiking
         sp(2) = subplot(2, 1, 2);
-        imagesc( alf{ nday }( ntr ).spikes(:, alf{ nday }( ntr ).( whichfieldPlot ) + timePoints ) );
+        norm_rates = normalize(alf{ nday }( ntr ).rates_filtered(:, alf{ nday }( ntr ).( whichfieldPlot ) + timePoints ), 'centered');
+        imagesc( norm_rates );
         %c = flipud(gray);
         %c_1 = [c(1:3,:); c(38:64,:)];
         %colormap(gca, c_1)
@@ -95,7 +93,7 @@ for nday = 2
         set(gca,'XTick',[1 0.75*numel(timePoints) 65/80*numel(timePoints) numel(timePoints)]);
         %set(gca,'XTickLabels',{'Cue+100','400','700'});
         set(gca,'XTickLabels',{'-600','TO', '+50', '+200'});
-        title(sp(2), 'Real Spiking');
+        title(sp(2), 'LFADS rates');
         ylabel('Multi-units');
         % %         set(sp(8), 'FontSize', 7);
 

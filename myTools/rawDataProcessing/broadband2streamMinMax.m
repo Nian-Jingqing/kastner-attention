@@ -187,10 +187,10 @@ while currentBufferStartInd < endIndex
     dataBuffer_normd = normalize(dataBuffer, 'centered');
 
     % set up a low pass filter to eliminate frequencies above 5000Hz % FZ added on 11/17/2019
-    Fs = 40000;
-    [b,a] = butter(4, [5000] / (Fs / 2), 'low');
-    dataBuffer_normd = filtfilt(b, a, dataBuffer_normd');
-    dataBuffer_normd = dataBuffer_normd';
+    %Fs = 40000;
+    %[b,a] = butter(4, [5000] / (Fs / 2), 'low');
+    %dataBuffer_normd = filtfilt(b, a, dataBuffer_normd');
+    %dataBuffer_normd = dataBuffer_normd';
     
     Fs = 40000;
     if sum(isnan(dataBuffer_normd(:))) == 0  % handle the last dataBuffer in the file, which has NaNs. Can't use pwelch to find peaks in this case.
@@ -204,11 +204,11 @@ while currentBufferStartInd < endIndex
         pks = {};
         for nn = 1:size(dataBuffer_normd, 1)
             [pks_tmp, locs_tmp] = findpeaks(10 * log10(Pxx_normd(:, nn)'), x,  'MinPeakProminence', 5 );
-            %pksInBand = find(locs_tmp <= 5000 & locs_tmp >= 300); % FZ removed on 11/17/2019
-            %locs{nn} = locs_tmp(pksInBand); % FZ removed on 11/17/2019
-            locs{nn} = locs_tmp; % FZ added on 11/17/2019
-            %pks{nn} = pks_tmp(pksInBand); % FZ removed on 11/17/2019
-            pks{nn} = pks_tmp; % FZ added on 11/17/2019
+            pksInBand = find(locs_tmp <= 5050 & locs_tmp >= 250); % FZ removed on 11/17/2019
+            locs{nn} = locs_tmp(pksInBand); % FZ removed on 11/17/2019
+                                            %locs{nn} = locs_tmp; % FZ added on 11/17/2019
+            pks{nn} = pks_tmp(pksInBand); % FZ removed on 11/17/2019
+                                          %pks{nn} = pks_tmp; % FZ added on 11/17/2019
         end
     end
     dataFiltered = dataBuffer_normd;

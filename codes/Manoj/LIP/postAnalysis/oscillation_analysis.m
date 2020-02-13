@@ -1,6 +1,6 @@
 %% loop through each day, each channel, and calculate a trial-avg Pxx for each channel
 Fs = 100;
-preTime = 1000;
+preTime = 600;
 whichfield = 'targetStart';
 window = round([-1*preTime 0] / binsize_rescaled);
 timePoints = window(1):window(2);
@@ -29,7 +29,7 @@ for nday = 1:numel(alf)
 end
 
 %%
-saveRoot = '/snel/share/share/derived/kastner/LFADS_runs/Manoj/LIP/postAnalysis/tc_newSP_PBT_191107/powerAnalysis/';
+saveRoot = '/snel/share/share/derived/kastner/LFADS_runs/Manoj/LIP/postAnalysis/tc_newSP_PBT_191120/powerAnalysis/tmp/';
 if ~isdir(saveRoot)
     mkdir(saveRoot);
 end
@@ -56,9 +56,12 @@ for nday = 1:numel(alf)
         plot(w*Fs/(2*pi), down,'b', 'lineWidth', 1);
         hold on
         xlim([0 50])
+        xlabel('Frequency')
+        ylabel('Power')
+        title(['Channel ' int2str(alf{nday}(1).channel_info(nNeuron))])
     end
     set(gcf, 'Position', [28 269 1877 663])
-    title(['Day ' dataset(nday).date])
+    suptitle(['Day ' dataset(nday).date])
     print(f1,['Day ' dataset(nday).date], '-dpng');
 end
 

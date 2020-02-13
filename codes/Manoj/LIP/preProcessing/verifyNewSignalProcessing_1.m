@@ -13,7 +13,7 @@ baseDir = '/home/feng';
 %dataset(2).date = '03062019';
 %dataset(3).date = '03112019';
 %dataset(4).date = '03142019';
-%dataset(5).date = '03272019'; % previously didn't work
+%dataset(1).date = '03272019'; % previously didn't work
 %dataset(5).date = '04062019';
 %dataset(6).date = '04252019';
 %dataset(7).date = '05022019';
@@ -39,16 +39,18 @@ baseDir = '/home/feng';
 %dataset(7).date = '03132019';
 %dataset(8).date = '03152019';
 
-dataset(1).date = '03162019';
-dataset(2).date = '03182019';
-dataset(3).date = '03292019';
-dataset(4).date = '03312019';
-dataset(5).date = '04012019';
-dataset(6).date = '04032019';
-dataset(7).date = '04052019';
-dataset(8).date = '04242019';
-dataset(9).date = '04262019';
-dataset(10).date = '04292019';
+%dataset(1).date = '03162019';
+%dataset(2).date = '03182019';
+%dataset(3).date = '03292019';
+%dataset(4).date = '03312019';
+%dataset(5).date = '04012019';
+%dataset(6).date = '04032019';
+%dataset(7).date = '04052019';
+%dataset(8).date = '04242019';
+%dataset(9).date = '04262019';
+%dataset(10).date = '04292019';
+
+dataset(1).date = '03082019';
 
 outDir_new = '/snel/share/share/data/kastner/Manoj/LIP/spikeBand/notchFilt_bandPass/tmp/';
 outDir_old = '/snel/share/share/data/kastner/Manoj/LIP/spikeBand/notchFilt_bandPass/tmp1/';

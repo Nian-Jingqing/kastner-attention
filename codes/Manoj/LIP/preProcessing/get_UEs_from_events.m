@@ -29,23 +29,24 @@
 %dataset(7).date = '03132019';
 %dataset(8).date = '03152019';
 
-dataset(1).date = '03162019';
-dataset(2).date = '03182019';
-dataset(3).date = '03292019';
-dataset(4).date = '03312019';
-dataset(5).date = '04012019';
-dataset(6).date = '04032019';
-dataset(7).date = '04052019';
-dataset(8).date = '04242019';
-dataset(9).date = '04262019';
-dataset(10).date = '04292019';
+%dataset(1).date = '03162019';
+%dataset(2).date = '03182019';
+%dataset(3).date = '03292019';
+%dataset(4).date = '03312019';
+%dataset(5).date = '04012019';
+%dataset(6).date = '04032019';
+%dataset(7).date = '04052019';
+%dataset(8).date = '04242019';
+%dataset(9).date = '04262019';
+%dataset(10).date = '04292019';
+dataset(1).date = '03082019';
 
 %%
 eventMatPath = '/snel/share/share/data/kastner/Manoj/LIP/eventMat/';
 rawSampleRate = 1000;
 savedir = '/snel/share/share/derived/kastner/data_processed/ManojData/singleArea/LIP/UEs/';
 
-for day = 1:10
+for day = numel(dataset)
     tic;
     clear UE
     dayEventFileName = ['eventmat_' dataset(day).date '.mat'];

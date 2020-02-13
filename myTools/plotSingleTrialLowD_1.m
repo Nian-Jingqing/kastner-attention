@@ -1,4 +1,4 @@
-function plotSingleTrialLowD(alf, UE, nday, proj_matrix_this_day, rateOrSpike, timePoints, sub_title, proj_bias_this_day, binsize_rescaled)
+function plotSingleTrialLowD_1(alf, UE, nday, pca_proj_mat, rateOrSpike, timePoints, sub_title, all_data_means)
 % define legend
 cond{1} = 'TL-V';
 cond{2} = 'TL-H';
@@ -26,17 +26,11 @@ for nCue = [2, 4]
         trialIndicesThisCond = find((UE{nday}.barType == nBar) & (UE{nday}.cueType == nCue));
         for itr = 1:numel(trialIndicesThisCond)
             ntr = trialIndicesThisCond(itr);
-            if strcmp(rateOrSpike, 'spikes')
-                data_this_trial = (1000/binsize_rescaled)*alf{nday}(ntr).(rateOrSpike)(:, alf{nday}(ntr).cueOnset + timePoints);
-            else
-                
-                data_this_trial = alf{nday}(ntr).(rateOrSpike)(:, alf{nday}(ntr).cueOnset + timePoints);
-            end
-            %data_this_trial_centered = bsxfun(@minus, data_this_trial, mean(data_this_trial, 2)); % not correct
-            data_this_trial_centered = bsxfun(@minus, data_this_trial, proj_bias_this_day);
-            lowD_this_trial = proj_matrix_this_day' * data_this_trial_centered; % this should be nChannels x nTimes
-            %sigma = 3;
-            %lowD_this_trial = smooth2Dmatrix(lowD_this_trial, sigma);
+            data_this_trial = alf{nday}(ntr).(rateOrSpike)(:, alf{nday}(ntr).cueOnset + timePoints);
+            data_this_trial_centered = bsxfun(@minus, data_this_trial, mean(data_this_trial, 2));
+            %data_this_trial_centered = bsxfun(@minus, data_this_trial, all_data_means);
+            lowD_this_trial = pca_proj_mat' * data_this_trial_centered;
+            
             if itr == 1
                 %h(i) = plot3(lowD_this_trial(1, :), lowD_this_trial(2, :), lowD_this_trial(3, :), 'Color', (1-0.15*b)*cmap(a, :), 'LineWidth', 1, 'DisplayName', cond{i});
                 h(i) = plot3(lowD_this_trial(1, :), lowD_this_trial(2, :), lowD_this_trial(3, :), 'Color', (1-0.15*b)*cmap(nCue, :), 'LineWidth', 1, 'DisplayName', cond{2*nCue - 1});

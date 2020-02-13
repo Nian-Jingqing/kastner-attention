@@ -1,4 +1,4 @@
-function plotSingleTrialLowD(alf, UE, nday, proj_matrix_this_day, rateOrSpike, timePoints, sub_title, proj_bias_this_day, binsize_rescaled)
+function plotSingleTrialPC(cueID, pcID, alf, UE, nday, proj_matrix_this_day, rateOrSpike, timePoints, sub_title, proj_bias_this_day, binsize_rescaled)
 % define legend
 cond{1} = 'TL-V';
 cond{2} = 'TL-H';
@@ -20,7 +20,8 @@ a = 1;
 b = 1;
 %keyboard
 %for nCue = 1:numel(conditions.cueOn)
-for nCue = [2, 4]
+hold all
+for nCue = cueID
     %for nBar = 1:numel(conditions.barOn)
     for nBar = 1
         trialIndicesThisCond = find((UE{nday}.barType == nBar) & (UE{nday}.cueType == nCue));
@@ -38,24 +39,12 @@ for nCue = [2, 4]
             %sigma = 3;
             %lowD_this_trial = smooth2Dmatrix(lowD_this_trial, sigma);
             if itr == 1
-                %h(i) = plot3(lowD_this_trial(1, :), lowD_this_trial(2, :), lowD_this_trial(3, :), 'Color', (1-0.15*b)*cmap(a, :), 'LineWidth', 1, 'DisplayName', cond{i});
-                h(i) = plot3(lowD_this_trial(1, :), lowD_this_trial(2, :), lowD_this_trial(3, :), 'Color', (1-0.15*b)*cmap(nCue, :), 'LineWidth', 1, 'DisplayName', cond{2*nCue - 1});
+                h(i) = plot(lowD_this_trial(pcID, :), 'Color', 0.85*cmap(cueID, :), 'LineWidth', 1, 'DisplayName', sub_title);
             else
-                %plot3(lowD_this_trial(1, :), lowD_this_trial(2, :), lowD_this_trial(3, :), 'Color', (1-0.15*b)*cmap(a, :), 'LineWidth', 1);
-                plot3(lowD_this_trial(1, :), lowD_this_trial(2, :), lowD_this_trial(3, :), 'Color', (1-0.15*b)*cmap(nCue, :), 'LineWidth', 1);
-            end
-            
+                plot(lowD_this_trial(pcID, :), 'Color', 0.85*cmap(cueID, :), 'LineWidth', 1);
+            end            
             hold on
-            %plot3(lowD_this_trial(1, 1), lowD_this_trial(2, 1), lowD_this_trial(3, 1), 'o', 'MarkerFaceColor', (1-0.15*b)*cmap(a,:), 'MarkerEdgeColor', (1-0.15*b)*cmap(a,:))
-            plot3(lowD_this_trial(1, 1), lowD_this_trial(2, 1), lowD_this_trial(3, 1), 'o', 'MarkerFaceColor', (1-0.15*b)*cmap(nCue,:), 'MarkerEdgeColor', (1-0.15*b)*cmap(nCue,:))
         end
-        i = i+1;
-        a = a+b-1;
-        b = 1+rem(b,2);
     end
 end
-set(gca, 'view', [-40.7000, -22.8000]);
-legend(h(1:2));
-%legend(h(1:8));
-legend('Location', 'best')
-title(sub_title);
+%legend(h(1));

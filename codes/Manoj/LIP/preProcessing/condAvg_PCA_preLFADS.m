@@ -71,10 +71,10 @@ dataset(8).date = '03032019';
 dataset(9).date = '03062019';
 dataset(10).date = '03142019';
 %dataset(11).date = '03162019';
-%dataset(12).date = '03312019';
-%dataset(13).date = '04012019';
-%dataset(14).date = '04052019';
-%dataset(15).date = '04262019';
+dataset(11).date = '03312019';
+dataset(12).date = '04012019';
+%dataset(13).date = '04052019';
+%dataset(11).date = '04262019';
 
 good_channels{1} = [11, 14, 15, 18, 19, 20, 21, 22, 23, 24, 25, 26];
 good_channels{2} = [4, 5, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 26, 27, 28, 29, 30, 32];
@@ -87,10 +87,10 @@ good_channels{8} = [18, 25, 27, 29, 30, 31];
 good_channels{9} = [22, 23, 24, 26, 27, 28, 30, 31];
 good_channels{10} = [8, 21, 24, 25, 26, 27, 31, 32];
 %good_channels{11} = [4, 8, 14, 16, 19, 21, 22];
-%good_channels{12} = [15, 16, 21, 22, 23, 29, 32];
-%good_channels{13} = [6, 7, 13, 14, 15, 19];
-%good_channels{14} = [10, 14, 15, 17, 28, 32];
-%good_channels{15} = [4, 21, 22, 23, 30, 31];
+good_channels{11} = [15, 16, 21, 22, 23, 29, 32];
+good_channels{12} = [6, 7, 13, 14, 15, 19];
+%good_channels{13} = [10, 14, 15, 17, 28, 32];
+%good_channels{11} = [4, 21, 22, 23, 30, 31];
 
 
 % load UE and spiking activity, also smooth the spikes and rebin

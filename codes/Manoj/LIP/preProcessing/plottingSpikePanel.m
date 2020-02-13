@@ -47,7 +47,7 @@ end
 suptitle(fig_title)
 set(gcf, 'Position', [4 4 1914 1082])
 
-savedir = '/snel/share/share/derived/kastner/data_processed/ManojData/singleArea/LIP/notch_filtering/notchFilterPlusBandPass/moreNewSessions/';
+savedir = '/snel/share/share/derived/kastner/data_processed/ManojData/singleArea/LIP/notch_filtering/notchFilterPlusBandPass/newSessions/';
 if ~isdir(savedir)
     mkdir(savedir);
 end

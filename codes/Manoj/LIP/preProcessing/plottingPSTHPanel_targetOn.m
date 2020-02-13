@@ -1,4 +1,4 @@
-function plottingPSTHPanel(bb, date, multiple)
+function plottingPSTHPanel_targetOn(bb, date, multiple)
 UE_baseDir = '/snel/share/share/derived/kastner/data_processed/ManojData/singleArea/LIP/UEs/';
 UE_file = ['UE_' date '.mat'];
 load_UE_path = fullfile(UE_baseDir, UE_file);
@@ -86,11 +86,16 @@ barStart = UE.barOn - UE.fixOn;
 cueStart = UE.cueOn - UE.fixOn;
 targetStart = UE.targetOn - UE.fixOn;
 tc = [];
+window_preCue = round([-300  0] / binsize_rescaled);
+timePoints_preCue = window_preCue(1):window_preCue(2);
+preCueTensor = zeros(numel(tc_rebinned), size(tc_rebinned(1).spike_smoothed, 1), numel(timePoints_preCue));
+keyboard
 for ntr = 1:numel(tc_rebinned)
     tc(ntr).spikes = tc_rebinned(ntr).spike_smoothed;
     tc( ntr ).barOnset = round( barStart( ntr ) /binsize_rescaled);
     tc( ntr ).cueOnset = round( cueStart( ntr ) / binsize_rescaled);
     tc( ntr ).targetStart = round( targetStart( ntr ) / binsize_rescaled);
+    preCueTensor(ntr, :,:) = tc(ntr).spikes(:, tc(ntr).cueOnset + timePoints_preCue);
 end
 
 %$ get PSTHs and rasters
